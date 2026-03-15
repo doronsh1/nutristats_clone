@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "NutriStat Clone",
+    "slug": "nutristat-clone",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ]
+  }
+}
