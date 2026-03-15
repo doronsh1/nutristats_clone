@@ -5,6 +5,7 @@
     "noEmit": true,
     "jsx": "react-native",
     "types": ["react", "react-native"],
+    "moduleSuffixes": [".native", ".web", ""],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
