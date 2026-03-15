@@ -160,8 +160,8 @@ The MVP is local-first, so screens call repository functions directly. The repos
 
 ## Scope Decisions
 
-- Included in MVP: home, nutrition planner, workout shell, barcode-linked foods, reports, settings, documentation, local auth stub, subscription gates
-- Deferred: external nutrition API lookup after scan, voice logging, steroid analyzer depth, full AI workout planner logic, billing backend
+- Included in MVP: home, nutrition planner, workout shell, barcode-linked foods, reports, settings, documentation, Firebase email auth, subscription gates
+- Deferred: backend-backed shared foods, review queue moderation, voice logging, steroid analyzer depth, full AI workout planner logic, billing backend
 
 ## Backend Status
 

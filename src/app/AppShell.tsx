@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { logout, getSession } from '../db/authRepo';
+import { logout, subscribeToSession } from '../db/authRepo';
 import { getSettings } from '../db/settingsRepo';
 import { useTheme } from '../theme/ThemeProvider';
 import type { AppScreen, UserSettings } from '../types/models';
@@ -29,25 +29,56 @@ export function AppShell() {
 
   useEffect(() => {
     let active = true;
+    let settingsReady = false;
+    let sessionReady = false;
+    let unsubscribe = () => {};
 
-    async function hydrate() {
-      const [session, currentSettings] = await Promise.all([getSession(), getSettings()]);
+    function finishLoading() {
+      if (active && settingsReady && sessionReady) {
+        setLoading(false);
+      }
+    }
+
+    getSettings()
+      .then((currentSettings) => {
+        if (!active) {
+          return;
+        }
+        setSettings(currentSettings);
+        settingsReady = true;
+        finishLoading();
+      })
+      .catch(() => {
+        if (!active) {
+          return;
+        }
+        settingsReady = true;
+        setLoading(false);
+      });
+
+    subscribeToSession((email) => {
       if (!active) {
         return;
       }
-      setSessionEmail(session);
-      setSettings(currentSettings);
-      setLoading(false);
-    }
-
-    hydrate().catch(() => {
-      if (active) {
-        setLoading(false);
-      }
-    });
+      setSessionEmail(email);
+      sessionReady = true;
+      finishLoading();
+    })
+      .then((nextUnsubscribe) => {
+        unsubscribe = nextUnsubscribe;
+      })
+      .catch(() => {
+        if (!active) {
+          return;
+        }
+        sessionReady = true;
+        setSessionEmail(null);
+        finishLoading();
+      });
 
     return () => {
       active = false;
+      unsubscribe();
     };
   }, []);
 
@@ -65,7 +96,7 @@ export function AppShell() {
   }
 
   if (!sessionEmail) {
-    return <LoginScreen onLoggedIn={setSessionEmail} />;
+    return <LoginScreen />;
   }
 
   return (
