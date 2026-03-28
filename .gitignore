@@ -18,6 +18,7 @@ pnpm-debug.log*
 
 *.tsbuildinfo
 
+package-lock.json
 firebase.js
 .env
 .env.local

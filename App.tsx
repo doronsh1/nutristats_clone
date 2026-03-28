@@ -11,25 +11,23 @@ import { ThemeProvider } from './src/theme/ThemeProvider';
 
 export default function App() {
   const [ready, setReady] = useState(false);
-  const [bootstrapStep, setBootstrapStep] = useState('Starting app');
+  const [bootstrapStep, setBootstrapStep] = useState('Initializing command deck');
   const [bootstrapError, setBootstrapError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
     const timeout = setTimeout(() => {
       if (active) {
-        setBootstrapError(
-          `Startup timed out while: ${bootstrapStep}. This usually means the local database did not initialize in the browser.`
-        );
+        setBootstrapError(`Startup timed out while: ${bootstrapStep}.`);
       }
     }, 12000);
 
     async function bootstrap() {
       setBootstrapStep('Opening local database');
       await runMigrations();
-      setBootstrapStep('Loading settings');
+      setBootstrapStep('Loading athlete profile');
       await ensureSettings();
-      setBootstrapStep('Seeding starter foods');
+      setBootstrapStep('Indexing staple foods');
       await ensureSeedFoods();
       if (active) {
         clearTimeout(timeout);
@@ -55,13 +53,11 @@ export default function App() {
       return (
         <View style={styles.loader}>
           <View style={styles.errorCard}>
-            <Text style={styles.errorTitle}>App startup failed</Text>
+            <Text style={styles.errorEyebrow}>SYSTEM ALERT</Text>
+            <Text style={styles.errorTitle}>Launch interrupted</Text>
             <Text style={styles.errorBody}>{bootstrapError}</Text>
-            <Text style={styles.errorHint}>
-              Ignore the React DevTools install message. It is unrelated to this failure.
-            </Text>
             <Pressable onPress={() => globalThis.location?.reload()} style={styles.retryButton}>
-              <Text style={styles.retryLabel}>Reload</Text>
+              <Text style={styles.retryLabel}>Reload command deck</Text>
             </Pressable>
           </View>
         </View>
@@ -70,8 +66,12 @@ export default function App() {
 
     return (
       <View style={styles.loader}>
-        <ActivityIndicator size="large" color={lightColors.accent} />
-        <Text style={styles.loadingLabel}>{bootstrapStep}...</Text>
+        <View style={styles.loaderCard}>
+          <Text style={styles.loaderEyebrow}>NUTRISTATS / KINETIC LAB</Text>
+          <Text style={styles.loaderTitle}>Preparing your performance workspace</Text>
+          <Text style={styles.loaderBody}>{bootstrapStep}</Text>
+          <ActivityIndicator size="large" color={lightColors.accentSecondary} />
+        </View>
       </View>
     );
   }
@@ -92,47 +92,71 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: lightColors.background,
     padding: 24,
+  },
+  loaderCard: {
+    width: '100%',
+    maxWidth: 560,
+    borderRadius: 28,
+    borderWidth: 1,
+    borderColor: lightColors.border,
+    backgroundColor: lightColors.surface,
+    padding: 24,
     gap: 14,
   },
-  loadingLabel: {
+  loaderEyebrow: {
+    color: lightColors.accentSecondary,
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 1.2,
+  },
+  loaderTitle: {
     color: lightColors.text,
-    fontSize: 14,
+    fontSize: 32,
+    lineHeight: 36,
+    fontWeight: '900',
+  },
+  loaderBody: {
+    color: lightColors.muted,
+    fontSize: 15,
+    lineHeight: 21,
   },
   errorCard: {
     width: '100%',
     maxWidth: 560,
-    borderRadius: 24,
+    borderRadius: 28,
     borderWidth: 1,
-    borderColor: lightColors.border,
+    borderColor: lightColors.danger,
     backgroundColor: lightColors.surface,
-    padding: 20,
+    padding: 24,
     gap: 12,
   },
-  errorTitle: {
+  errorEyebrow: {
     color: lightColors.danger,
-    fontSize: 22,
-    fontWeight: '800',
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 1.1,
+  },
+  errorTitle: {
+    color: lightColors.text,
+    fontSize: 28,
+    lineHeight: 32,
+    fontWeight: '900',
   },
   errorBody: {
-    color: lightColors.text,
+    color: lightColors.muted,
     fontSize: 14,
     lineHeight: 20,
-  },
-  errorHint: {
-    color: lightColors.muted,
-    fontSize: 13,
-    lineHeight: 18,
   },
   retryButton: {
     alignSelf: 'flex-start',
     backgroundColor: lightColors.accent,
-    borderRadius: 999,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   retryLabel: {
-    color: '#FFFFFF',
+    color: '#000000',
     fontSize: 13,
-    fontWeight: '800',
+    fontWeight: '900',
   },
 });

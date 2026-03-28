@@ -10,13 +10,15 @@ type BottomTabBarProps = {
   onMore: () => void;
 };
 
-const tabs: Array<{ key: AppScreen | 'More'; label: string }> = [
-  { key: 'Home', label: 'Home' },
-  { key: 'Nutrition', label: 'Fuel' },
-  { key: 'Workout', label: 'Train' },
-  { key: 'Reports', label: 'Progress' },
-  { key: 'More', label: 'More' },
+const tabs: Array<{ key: AppScreen | 'More'; label: string; glyph: string }> = [
+  { key: 'Home', label: 'Diary', glyph: '01' },
+  { key: 'Nutrition', label: 'Fuel', glyph: '02' },
+  { key: 'Workout', label: 'Train', glyph: '03' },
+  { key: 'Reports', label: 'Signals', glyph: '04' },
+  { key: 'More', label: 'More', glyph: '05' },
 ];
+
+const moreScreens: AppScreen[] = ['Foods', 'Settings', 'Docs'];
 
 export function BottomTabBar({ screen, onChange, onMore }: BottomTabBarProps) {
   const { colors } = useTheme();
@@ -24,19 +26,14 @@ export function BottomTabBar({ screen, onChange, onMore }: BottomTabBarProps) {
   return (
     <View style={[styles.shell, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       {tabs.map((tab) => {
-        const active = tab.key !== 'More' && tab.key === screen;
+        const active = tab.key === 'More' ? moreScreens.includes(screen) : tab.key === screen;
         return (
           <Pressable
             key={tab.key}
             onPress={() => (tab.key === 'More' ? onMore() : onChange(tab.key))}
-            style={[
-              styles.item,
-              {
-                backgroundColor: active ? colors.accentSoft : 'transparent',
-              },
-            ]}
+            style={[styles.item, active ? { backgroundColor: colors.surfaceMuted } : null]}
           >
-            <View style={[styles.dot, { backgroundColor: active ? colors.accent : colors.surfaceMuted }]} />
+            <Text style={[styles.glyph, { color: active ? colors.accent : colors.muted }]}>{tab.glyph}</Text>
             <Text style={[styles.label, { color: active ? colors.text : colors.muted }]}>{tab.label}</Text>
           </Pressable>
         );
@@ -48,36 +45,25 @@ export function BottomTabBar({ screen, onChange, onMore }: BottomTabBarProps) {
 const styles = StyleSheet.create({
   shell: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     gap: 6,
     borderWidth: 1,
     borderRadius: 24,
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    marginHorizontal: 14,
+    padding: 8,
+    marginHorizontal: 12,
     marginBottom: 10,
-    shadowColor: '#000000',
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    elevation: 4,
   },
   item: {
     flex: 1,
+    minHeight: 58,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 16,
-    paddingVertical: 10,
     gap: 4,
   },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 999,
+  glyph: {
+    fontSize: 10,
+    fontWeight: '900',
+    letterSpacing: 1,
   },
   label: {
     fontSize: 11,

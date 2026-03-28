@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-primary": "#b12f00",
+              "tertiary": "#c2ff99",
+              "outline-variant": "#484847",
+              "on-secondary-container": "#e8fbff",
+              "primary-fixed-dim": "#ff5d2b",
+              "on-tertiary-fixed-variant": "#2b6600",
+              "surface": "#0e0e0e",
+              "secondary": "#00e3fd",
+              "surface-variant": "#262626",
+              "error": "#ff716c",
+              "background": "#0e0e0e",
+              "primary-container": "#ff7851",
+              "tertiary-container": "#75fd00",
+              "on-primary-fixed-variant": "#581300",
+              "error-container": "#9f0519",
+              "primary": "#ff8f6f",
+              "on-secondary-fixed-variant": "#005964",
+              "on-error-container": "#ffa8a3",
+              "secondary-dim": "#00d4ec",
+              "surface-container-lowest": "#000000",
+              "secondary-container": "#006875",
+              "on-primary-container": "#470e00",
+              "tertiary-fixed": "#75fd00",
+              "surface-bright": "#2c2c2c",
+              "surface-dim": "#0e0e0e",
+              "on-secondary-fixed": "#003a42",
+              "error-dim": "#d7383b",
+              "on-surface-variant": "#adaaaa",
+              "secondary-fixed-dim": "#00d7f0",
+              "on-surface": "#ffffff",
+              "outline": "#767575",
+              "primary-dim": "#ff734a",
+              "tertiary-dim": "#6ded00",
+              "on-tertiary": "#2b6500",
+              "inverse-surface": "#fcf9f8",
+              "on-tertiary-fixed": "#1c4700",
+              "on-error": "#490006",
+              "surface-container-high": "#20201f",
+              "secondary-fixed": "#26e6ff",
+              "on-secondary": "#004d57",
+              "on-background": "#ffffff",
+              "inverse-on-surface": "#565555",
+              "surface-tint": "#ff8f6f",
+              "primary-fixed": "#ff7851",
+              "tertiary-fixed-dim": "#6ded00",
+              "on-tertiary-container": "#265c00",
+              "surface-container-highest": "#262626",
+              "surface-container-low": "#131313",
+              "on-primary": "#5c1400",
+              "surface-container": "#1a1a1a",
+              "on-primary-fixed": "#000000"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-headline { font-family: 'Space Grotesk', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#0e0e0e]/80 backdrop-blur-xl border-b border-[#ffffff]/10 flex justify-between items-center px-6 h-16 shadow-[0_0_20px_rgba(0,227,253,0.04)]">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#ff8f6f] cursor-pointer">arrow_back</span>
+<h1 class="font-headline uppercase tracking-tighter font-bold text-xl text-[#ff8f6f]">DAILY_PERFORMANCE</h1>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-secondary/20">
+<img alt="User Profile" data-alt="Close up of a professional athlete profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXWPRu9G-mSdK0bq8uO8SZyjptaXiUv8LTxiQBRoKN-ZNSIXnNztnJKYM_BfB3IPAz4U436untZacyOL2ufXA1-wsYQEvmvHlSMgDzBhvLZ4nRCihs8n3SaYOM8qfNMr4lypuJzSxd1rgDvY22aaL44WSrgHExgyrGFJ7imQ_dHdrgbRDYUEj_n4ySskE6uVoaE7FLW0OKVxOFpfIMN0hKNMoiZ5MaN_W_x8fVYRF42fj3WtZGk6_umh6IHdNCyIo_FKsqVdHkifLQ"/>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-md mx-auto">
+<!-- Search Section -->
+<div class="mb-8">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-secondary transition-colors">search</span>
+<input class="w-full bg-surface-container-low border-0 border-b-2 border-outline-variant/30 focus:border-secondary focus:ring-0 text-on-surface font-headline tracking-widest placeholder:text-on-surface-variant/40 py-4 pl-12 pr-4 transition-all uppercase text-sm" placeholder="SEARCH PERFORMANCE FUEL..." type="text"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant cursor-pointer">barcode_scanner</span>
+</div>
+</div>
+<!-- Selected Food (The "Active" Intent) -->
+<section class="mb-10 bg-surface-container-low p-1 border-l-2 border-primary">
+<div class="bg-surface-container p-5">
+<div class="flex justify-between items-start mb-6">
+<div>
+<span class="text-[10px] font-bold tracking-[0.2em] text-secondary uppercase mb-1 block">ACTIVE_SELECTION</span>
+<h2 class="font-headline text-2xl font-bold uppercase leading-tight">GRASS-FED RIBEYE</h2>
+</div>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<!-- Compact Macro Breakdown -->
+<div class="grid grid-cols-4 gap-2 mb-8">
+<div class="bg-surface-container-high p-3 flex flex-col items-center">
+<span class="text-on-surface-variant text-[10px] font-bold mb-1">PRO</span>
+<span class="font-headline text-lg font-bold text-primary">28g</span>
+</div>
+<div class="bg-surface-container-high p-3 flex flex-col items-center">
+<span class="text-on-surface-variant text-[10px] font-bold mb-1">CARB</span>
+<span class="font-headline text-lg font-bold text-secondary">0g</span>
+</div>
+<div class="bg-surface-container-high p-3 flex flex-col items-center">
+<span class="text-on-surface-variant text-[10px] font-bold mb-1">FAT</span>
+<span class="font-headline text-lg font-bold text-error">22g</span>
+</div>
+<div class="bg-surface-container-high p-3 flex flex-col items-center border border-primary/20">
+<span class="text-on-surface-variant text-[10px] font-bold mb-1">CAL</span>
+<span class="font-headline text-lg font-bold text-on-surface">310</span>
+</div>
+</div>
+<!-- Quantity Input -->
+<div class="flex items-center gap-4 mb-6">
+<div class="flex-1">
+<label class="block text-[10px] font-bold tracking-widest text-on-surface-variant uppercase mb-2">QUANTITY (G)</label>
+<input class="w-full bg-surface-container-high border-0 border-b border-outline-variant/30 focus:border-primary focus:ring-0 text-on-surface font-headline text-xl py-2 px-0" type="number" value="100"/>
+</div>
+<div class="w-24">
+<label class="block text-[10px] font-bold tracking-widest text-on-surface-variant uppercase mb-2">UNIT</label>
+<div class="bg-surface-container-high py-2 text-center font-bold text-sm tracking-tighter border-b border-outline-variant/30">GRAMS</div>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary-fixed font-headline font-black py-4 tracking-[0.2em] active:scale-95 transition-transform">
+                    ADD TO MEAL
+                </button>
+</div>
+</section>
+<!-- Quick Access Categories - Bento Style -->
+<div class="space-y-8">
+<!-- Recent Foods -->
+<div>
+<div class="flex items-center justify-between mb-4 px-1">
+<h3 class="font-headline font-bold tracking-widest uppercase text-xs text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">history</span>
+                        RECENT_FOODS
+                    </h3>
+<span class="text-[10px] font-bold text-secondary cursor-pointer">VIEW_ALL</span>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-surface-container p-4 active:bg-surface-container-high transition-colors cursor-pointer group">
+<p class="text-[10px] text-on-surface-variant mb-1">2h ago</p>
+<h4 class="font-headline font-bold text-sm uppercase group-hover:text-primary transition-colors">Whey Isolate</h4>
+<p class="text-[10px] text-tertiary mt-2 tracking-widest">120 CAL • 25P</p>
+</div>
+<div class="bg-surface-container p-4 active:bg-surface-container-high transition-colors cursor-pointer group">
+<p class="text-[10px] text-on-surface-variant mb-1">5h ago</p>
+<h4 class="font-headline font-bold text-sm uppercase group-hover:text-primary transition-colors">Greek Yogurt</h4>
+<p class="text-[10px] text-tertiary mt-2 tracking-widest">150 CAL • 18P</p>
+</div>
+<div class="bg-surface-container p-4 active:bg-surface-container-high transition-colors cursor-pointer group col-span-2">
+<div class="flex justify-between items-center">
+<div>
+<p class="text-[10px] text-on-surface-variant mb-1">Yesterday</p>
+<h4 class="font-headline font-bold text-sm uppercase group-hover:text-primary transition-colors">Oatmeal w/ Berries</h4>
+<p class="text-[10px] text-tertiary mt-2 tracking-widest">340 CAL • 55C • 12P</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Saved Meals -->
+<div>
+<div class="flex items-center justify-between mb-4 px-1">
+<h3 class="font-headline font-bold tracking-widest uppercase text-xs text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">bookmark</span>
+                        MY_SAVED_MEALS
+                    </h3>
+<span class="text-[10px] font-bold text-secondary cursor-pointer">MANAGE</span>
+</div>
+<div class="flex flex-col gap-3">
+<div class="bg-surface-container-low p-4 flex items-center gap-4 relative overflow-hidden group cursor-pointer border-r-2 border-transparent hover:border-secondary transition-all">
+<div class="w-12 h-12 bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary">restaurant</span>
+</div>
+<div class="flex-1">
+<h4 class="font-headline font-bold text-sm uppercase tracking-tight">PRE-WORKOUT PUMP</h4>
+<p class="text-[10px] text-on-surface-variant uppercase mt-1 tracking-widest">4 Ingredients • 450 Cal</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/40">add_circle</span>
+<div class="absolute inset-0 bg-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="bg-surface-container-low p-4 flex items-center gap-4 relative overflow-hidden group cursor-pointer border-r-2 border-transparent hover:border-secondary transition-all">
+<div class="w-12 h-12 bg-surface-container-high flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary">fitness_center</span>
+</div>
+<div class="flex-1">
+<h4 class="font-headline font-bold text-sm uppercase tracking-tight">POST-ISO RECOVERY</h4>
+<p class="text-[10px] text-on-surface-variant uppercase mt-1 tracking-widest">3 Ingredients • 620 Cal</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant/40">add_circle</span>
+<div class="absolute inset-0 bg-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 h-20 bg-[#0e0e0e]/90 backdrop-blur-2xl border-t border-[#ffffff]/10 flex justify-around items-center px-4 pb-4">
+<div class="flex flex-col items-center justify-center text-[#adaaaa] opacity-60 hover:opacity-100 hover:text-[#00e3fd] transition-all cursor-pointer">
+<span class="material-symbols-outlined">event_note</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold tracking-widest uppercase mt-1">DIARY</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#adaaaa] opacity-60 hover:opacity-100 hover:text-[#00e3fd] transition-all cursor-pointer">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold tracking-widest uppercase mt-1">TRAIN</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#ff8f6f] scale-110 active:translate-y-[-2px] transition-all cursor-pointer">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold tracking-widest uppercase mt-1">FUEL</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#adaaaa] opacity-60 hover:opacity-100 hover:text-[#00e3fd] transition-all cursor-pointer">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold tracking-widest uppercase mt-1">ELITE</span>
+</div>
+</nav>
+</body></html>

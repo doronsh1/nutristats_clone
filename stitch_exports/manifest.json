@@ -1,0 +1,134 @@
+{
+  "projectId": "15247255921407882620",
+  "projectTitle": "Product Requirements Document - NutriStats Redesign",
+  "exportedAt": "2026-03-26",
+  "screens": [
+    {
+      "order": 1,
+      "id": "18fa373db72e42288de9c31a7912162a",
+      "title": "Product Requirements Document - NutriStats Redesign",
+      "imageUrl": null,
+      "codeUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzhiMDFkOTVhMDM3MzQ0Y2ZhZTAzNTJjMzU5YzkwNjIwEgsSBxC2yIOg8wsYAZIBJAoKcHJvamVjdF9pZBIWQhQxNTI0NzI1NTkyMTQwNzg4MjYyMA&filename=&opi=89354086",
+      "imagePath": null,
+      "codePath": "screens/code/01-product-requirements-document-nutristats-redesign.html"
+    },
+    {
+      "order": 2,
+      "id": "a2b254f4d38742b19c9fc2aa8c71a4cf",
+      "title": "Login / Onboarding",
+      "imageUrl": "https://lh3.googleusercontent.com/aida/ADBb0uhsEcnQnpXP4tkCgPypprbpN1hmVA-LNOv5fzYBVVLLe2ilFNJ8W9uSZBKGQFxuj867Or4LUR7kxGiIWKucyQ7OBb96Cn72UzXDLdvGfrjogamI3t_giG56izn_9JGsxXCzKactn-HxHw23wSiFTu9zNG2b-_9SUgG9Vz1sDyvyZG9QL7gCZ15oUOolSfnrvhHLAe_aILBZBpFyJOsDXnPogC78jdfunV5J9cMUnwuyZAtrZy5JUD3qQI7f",
+      "codeUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2QwODU5YzE3MDk1MjRiNGI4ZTdmNWIyOTlmMGVkZjYyEgsSBxC2yIOg8wsYAZIBJAoKcHJvamVjdF9pZBIWQhQxNTI0NzI1NTkyMTQwNzg4MjYyMA&filename=&opi=89354086",
+      "imagePath": "screens/images/02-login-onboarding.png",
+      "codePath": "screens/code/02-login-onboarding.html"
+    },
+    {
+      "order": 3,
+      "id": "8302b98efc8e413494addc0b7c4d9e10",
+      "title": "Saved Meals / Templates",
+      "imageUrl": "https://lh3.googleusercontent.com/aida/ADBb0ugYEdaFWEVWUKwsRfNFS8eBrbT7bnPN49_2PK1W83UIailDRMGNd--AWoSXFm5H3UgKZHKQerqAwiMdODtyGFN_7wP7EdPrU4RIqPzaOPIaqzMXxUfaUEX5y08EfWOw8-a9leehWsTRkAlNzCSAiRf4fonrtX8uF_W3PfS5tb6Adgvq9SZmE30L2J_D9JZCB_67I-xuelP8c4KsKQ1liLPCtG_7LVoI1XRkjYx3HPL2J65sMcgAbL113ED3",
+      "codeUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2UxMDE2MGY0NmRjYTQ3MDdhZTQ4MWVjZjcyYTFiMDA0EgsSBxC2yIOg8wsYAZIBJAoKcHJvamVjdF9pZBIWQhQxNTI0NzI1NTkyMTQwNzg4MjYyMA&filename=&opi=89354086",
+      "imagePath": "screens/images/03-saved-meals-templates.png",
+      "codePath": "screens/code/03-saved-meals-templates.html"
+    },
+    {
+      "order": 4,
+      "id": "a1836c61c0cc4ebbbff24a155bfbba86",
+      "title": "Auto Fill Result Plan",
+      "imageUrl": "https://lh3.googleusercontent.com/aida/ADBb0uhyS0Wmyaf7tkqX-HOss16E_-5-dty8gfLY8kUBWxG8Qo48F4qWAWYQgaZ3ark2rqgbYXkNYFUjpFaI1VFIa2xGI-NBI00rDSFIcizZ000jKDeH5ZfSNzOY-ZN2xrZJ-TBTYRFu6y4kFmK8zz9DfKTIwppKWZ6EgRHUZsVxvMBUv9jAqvpXGgqKkvCP32F9OT6W63TwqyMN5N2sSixDspMF723m2Rm-4xO5LETmwUhxQdnekm6RcCSKQ8pp",
+      "codeUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzMxN2JkYTVhZjQ5OTRkYjg4NzlkNTM3ZWE3YWI3ZGNiEgsSBxC2yIOg8wsYAZIBJAoKcHJvamVjdF9pZBIWQhQxNTI0NzI1NTkyMTQwNzg4MjYyMA&filename=&opi=89354086",
+      "imagePath": "screens/images/04-auto-fill-result-plan.png",
+      "codePath": "screens/code/04-auto-fill-result-plan.html"
+    },
+    {
+      "order": 5,
+      "id": "c8a259ea9c194b48a81ac898b84585c3",
+      "title": "Workout Dashboard",
+      "imageUrl": "https://lh3.googleusercontent.com/aida/ADBb0uhq0jhsG_4HhQt9Da2GGX1aT21Mi74UrAj2WIDgmv9PzPq8dQAYiOXKDDrPvuwiVrpgu1xWW12XpCg8NXuMcoZSzqeRY806s93oOMRqTq7cJpBcJICUgIK6EvD-_zaChDxHTXnvsQyRWbHCkjaAfyjpV5VbFMgVyHW7K0B2S9-7njMd3TXeqDT6Qj1YF8oINTjufYyKusR4qd3MGymdSt5bTjnEij3Ljiy86jAzpM_xpSpBcGbYbqTbL1_w",
+      "codeUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzM0MDRmNjI1NjA5MDQ3NzQ5Y2Y0NmExZTg4YTk1NmFkEgsSBxC2yIOg8wsYAZIBJAoKcHJvamVjdF9pZBIWQhQxNTI0NzI1NTkyMTQwNzg4MjYyMA&filename=&opi=89354086",
+      "imagePath": "screens/images/05-workout-dashboard.png",
+      "codePath": "screens/code/05-workout-dashboard.html"
+    },
+    {
+      "order": 6,
+      "id": "c0618d48823348f786cb87f131845d2a",
+      "title": "Profile / Premium Area",
+      "imageUrl": "https://lh3.googleusercontent.com/aida/ADBb0uhPeuhOM4VHqge90v7qWxAHqUDaQkqAQxs-Nh3MvwH0ypImRNv1jCDMILCpfLVjVwJ6aklUw323vehilqBdwIFXH3-qSpakMeVxmH76YI0wJQxAYMWdWJZ1xlGXlWb3hP7QOwMIrXDnZUD3vrSSGFbB9sUaUI4R-7Nc_mLCvIcfR49UCmkDq0Ow-qaSRmad9V_zEHEqc5OlDdSUfFStiySjx67dched6kdX2y8ky46cw8mrB9bYQoeKvMQ",
+      "codeUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzRjYTljNDY1YjEwZTRlYWI4MTg5ZmQxOWU1ZDc2M2U3EgsSBxC2yIOg8wsYAZIBJAoKcHJvamVjdF9pZBIWQhQxNTI0NzI1NTkyMTQwNzg4MjYyMA&filename=&opi=89354086",
+      "imagePath": "screens/images/06-profile-premium-area.png",
+      "codePath": "screens/code/06-profile-premium-area.html"
+    },
+    {
+      "order": 7,
+      "id": "73e69a31c58d453bb1b309418fc75c58",
+      "title": "AI Performance Planner Setup",
+      "imageUrl": "https://lh3.googleusercontent.com/aida/ADBb0uh_81ikmoOs_2-S76rZro7Jgti8Rk0MnGOyagrSlFEtWJZEZCSw-5MsBWkcULb83rNNLUlALW7cpyu-PwT--TeBPUb2SHw4rumz12Dc7JezM6i35bxaeKnOy8Br-GSaIF5Bhetq6tqK9KDtHWZM_KfywvbY9HyKwd40t27bdo7QMEGkXDtIaEKN_3G0b94shrTh_j4v2xgyJ2osLAvOKC3uiPdzgQgw3MNY8E68hqmwuuvAzjdR-VSg7EGb",
+      "codeUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzUwMDg1NTRiOTlhNzQ1ZjRiODg1Y2RiZTVjMWM1NTVlEgsSBxC2yIOg8wsYAZIBJAoKcHJvamVjdF9pZBIWQhQxNTI0NzI1NTkyMTQwNzg4MjYyMA&filename=&opi=89354086",
+      "imagePath": "screens/images/07-ai-performance-planner-setup.png",
+      "codePath": "screens/code/07-ai-performance-planner-setup.html"
+    },
+    {
+      "order": 8,
+      "id": "de1d38885224430798850e330f112cf3",
+      "title": "Daily Performance Diary",
+      "imageUrl": "https://lh3.googleusercontent.com/aida/ADBb0ug_srb6kfoQ5AALkUC8tbyc23XdVjYDboVg72zPOIktWvx_U_uL_ESPK96_6bzIi6_Hr-0G717cB5BMT35YhjnD1nCHhJ3VP9IFQvfVbiD8mhzq0LAoz5DWaSAaEtl6b6ChAoYFReQ2uWoVqK9bESZJokOhncYy-qS8jQXddgeoTxBDXJ9yb9bSzH7X1Htaavr7WXUZH1Ox7OyLdv-fk-ulD5MQzGS6yXFTbvHw08i8FePQ112lzeKssPo",
+      "codeUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzcyYWIxZTBmMmI3MDQ2NjY5NDE0MDAxOTQ0Nzc3MTY1EgsSBxC2yIOg8wsYAZIBJAoKcHJvamVjdF9pZBIWQhQxNTI0NzI1NTkyMTQwNzg4MjYyMA&filename=&opi=89354086",
+      "imagePath": "screens/images/08-daily-performance-diary.png",
+      "codePath": "screens/code/08-daily-performance-diary.html"
+    },
+    {
+      "order": 9,
+      "id": "f4a78c4031ee4f7baa45b20e97825afb",
+      "title": "Fuel Database Search",
+      "imageUrl": "https://lh3.googleusercontent.com/aida/ADBb0uilk6K4q2lFRsmQtaXH5YUwblhrIdTA7cdQJi3eWN9Lz8vRLpuMWWJK9w6Xb04ql5Lc4jh-jmV8z7hG85wh7d3_klYZlEdgRDDM0kvMnTXNkpUMPDyJcbtv03_UDg_sGWillFR00Jqj4bIayg1OvP3uo68potFL4sxDjNYUke0FGzKVIdOB4xzIFHZysITzw4OcyZ_EinS-HQuvDAq9RiV60xl2vDcYNtTMF9-ZeovAwbHluwQA0RPkbfY",
+      "codeUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2VhMTBjYzBjZTRhZDRhNGY5ZTFlNGRlYmQyOThlMmVmEgsSBxC2yIOg8wsYAZIBJAoKcHJvamVjdF9pZBIWQhQxNTI0NzI1NTkyMTQwNzg4MjYyMA&filename=&opi=89354086",
+      "imagePath": "screens/images/09-fuel-database-search.png",
+      "codePath": "screens/code/09-fuel-database-search.html"
+    },
+    {
+      "order": 10,
+      "id": "asset-stub-assets-b89437ab43754c309b38beb3578eeeaa-1774225502915",
+      "title": "Design System",
+      "imageUrl": null,
+      "codeUrl": null,
+      "imagePath": null,
+      "codePath": null,
+      "designSystemPath": "design_system/iron-and-logic.json"
+    },
+    {
+      "order": 11,
+      "id": "0c80511e74a14944a30be199b2a04f43",
+      "title": "Athlete Login",
+      "imageUrl": "https://lh3.googleusercontent.com/aida/ADBb0uidASzm-xvb6jv16sTpPlH8eUWe65Cp5LRGMV-pZnqiH-u1Fk_-MGVzjMrwK5Hs6ThNT-l6SeNxhMd3bEOFgMfvSqHojd6k2FDmKvdMC4eFxSi1H-aTSDFrWZAwwRZg_pXMgBNyF8jYw6uv5gGcW4d0jzL_FnrI3ojxFVgL117hqnPiFJekJGkhXsb2FEVrmWS7JooBXaB85vrw73ZyOfLX6O9R5-e2YyMczGaYWoR6zIU-IngSSL1HDee0",
+      "codeUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzUxNzk4NDExODAwNzQ0ZTFhNDZiYWY5NDJlZWIxOWE3EgsSBxC2yIOg8wsYAZIBJAoKcHJvamVjdF9pZBIWQhQxNTI0NzI1NTkyMTQwNzg4MjYyMA&filename=&opi=89354086",
+      "imagePath": "screens/images/11-athlete-login.png",
+      "codePath": "screens/code/11-athlete-login.html"
+    },
+    {
+      "order": 12,
+      "id": "e487c5da4d854ad19af068f86e418c69",
+      "title": "Add Food / Search Food",
+      "imageUrl": "https://lh3.googleusercontent.com/aida/ADBb0uhCw0g_tSYSB_v2A-iZyV9RrAo5sFvPm1x1zohZoebFEaEPJvYEyUtmAERrfnS6H0MWzH0znCfYtrEbKT_MkPiOSPf5_C7N0znCy9-QLL-OSq4aqAhgcn12_3LEFd7V2H9wyIbPP9HNPiEDw9bdKDiA2gAwROVkJQuGtA1cYsxwXt2rrwUw9bmlKWZlemq1A8JvEC6j23H4TwB60esHpklyGyZHthwsdJvvjZHqQ6-5FYUqO355oiFtH9Y",
+      "codeUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzBjZTI4NmViZjQ2NjQxNTI5N2E4MmNmY2IwZWFiYjAwEgsSBxC2yIOg8wsYAZIBJAoKcHJvamVjdF9pZBIWQhQxNTI0NzI1NTkyMTQwNzg4MjYyMA&filename=&opi=89354086",
+      "imagePath": "screens/images/12-add-food-search-food.png",
+      "codePath": "screens/code/12-add-food-search-food.html"
+    },
+    {
+      "order": 13,
+      "id": "145b0e4b821a4938ac9be0c066efd103",
+      "title": "Auto Fill Setup Flow",
+      "imageUrl": "https://lh3.googleusercontent.com/aida/ADBb0ugVxVjGzXsWPSiixPmshzBQLPNUAgLqCqe7VWwIHuDOW3Wjg9A3x1NjMzXM_YjGDeu5yebaxjXyJxiQJ_-4ZD-OEAKeKACLD_FzVaUo4irVIgNDoCORz8hk1sthuvfkDVUQs2-p4BbdEH415dyIbs50FSkSoUrkAdLSlv9FHQafFhe0ZCecGdsicmRC58G7ywqDzF0qHwpd0FAGmNpW-4EfmHYMlWpiRYB01XIkt-51IsZ3TjcSCNjQrYjj",
+      "codeUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sX2UzYTAxNDIzN2YwZDRmNzc4ZTE4ZjhmYzE4MjQ2YmNhEgsSBxC2yIOg8wsYAZIBJAoKcHJvamVjdF9pZBIWQhQxNTI0NzI1NTkyMTQwNzg4MjYyMA&filename=&opi=89354086",
+      "imagePath": "screens/images/13-auto-fill-setup-flow.png",
+      "codePath": "screens/code/13-auto-fill-setup-flow.html"
+    },
+    {
+      "order": 14,
+      "id": "66d62a18b153451b8d28a0692b81855b",
+      "title": "Diary / Today Screen",
+      "imageUrl": "https://lh3.googleusercontent.com/aida/ADBb0uiy_cbmlqWojWQ5NpQ0CyPPApiMmc3BAJrgG-RhQHxtHiuY6pz8rNFZJcYtTqhi-vm-snnq6QPKjh-2maYvVHsQrIWfsDPhI1j0Z36Tpu7cUpGwBjy3crp6W_0UZnudEc6RA10cx6xiStgyqvfuRxZ1U798XbDI8wL2X2wj2erAzafSjAQHPBkFH2dxHkWxUXSFA5QdbTuIBaHCXkPen5ETwDuaUfCqyRryKQjRXq4zhLoVGDfxhnnBf9Wg",
+      "codeUrl": "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzg0OGU1ZDY0ODBhZDRmNWY4YzQwMjg5ZjA0ZmNkODZjEgsSBxC2yIOg8wsYAZIBJAoKcHJvamVjdF9pZBIWQhQxNTI0NzI1NTkyMTQwNzg4MjYyMA&filename=&opi=89354086",
+      "imagePath": "screens/images/14-diary-today-screen.png",
+      "codePath": "screens/code/14-diary-today-screen.html"
+    }
+  ]
+}

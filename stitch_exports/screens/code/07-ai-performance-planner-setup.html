@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Auto Fill Setup | The Kinetic Lab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-primary": "#b12f00",
+              "tertiary": "#c2ff99",
+              "outline-variant": "#484847",
+              "on-secondary-container": "#e8fbff",
+              "primary-fixed-dim": "#ff5d2b",
+              "on-tertiary-fixed-variant": "#2b6600",
+              "surface": "#0e0e0e",
+              "secondary": "#00e3fd",
+              "surface-variant": "#262626",
+              "error": "#ff716c",
+              "background": "#0e0e0e",
+              "primary-container": "#ff7851",
+              "tertiary-container": "#75fd00",
+              "on-primary-fixed-variant": "#581300",
+              "error-container": "#9f0519",
+              "primary": "#ff8f6f",
+              "on-secondary-fixed-variant": "#005964",
+              "on-error-container": "#ffa8a3",
+              "secondary-dim": "#00d4ec",
+              "surface-container-lowest": "#000000",
+              "secondary-container": "#006875",
+              "on-primary-container": "#470e00",
+              "tertiary-fixed": "#75fd00",
+              "surface-bright": "#2c2c2c",
+              "surface-dim": "#0e0e0e",
+              "on-secondary-fixed": "#003a42",
+              "error-dim": "#d7383b",
+              "on-surface-variant": "#adaaaa",
+              "secondary-fixed-dim": "#00d7f0",
+              "on-surface": "#ffffff",
+              "outline": "#767575",
+              "primary-dim": "#ff734a",
+              "tertiary-dim": "#6ded00",
+              "on-tertiary": "#2b6500",
+              "inverse-surface": "#fcf9f8",
+              "on-tertiary-fixed": "#1c4700",
+              "on-error": "#490006",
+              "surface-container-high": "#20201f",
+              "secondary-fixed": "#26e6ff",
+              "on-secondary": "#004d57",
+              "on-background": "#ffffff",
+              "inverse-on-surface": "#565555",
+              "surface-tint": "#ff8f6f",
+              "primary-fixed": "#ff7851",
+              "tertiary-fixed-dim": "#6ded00",
+              "on-tertiary-container": "#265c00",
+              "surface-container-highest": "#262626",
+              "surface-container-low": "#131313",
+              "on-primary": "#5c1400",
+              "surface-container": "#1a1a1a",
+              "on-primary-fixed": "#000000"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0e0e0e; }
+        ::-webkit-scrollbar-thumb { background: #1a1a1a; }
+        .no-line-card { position: relative; }
+        .no-line-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(72, 72, 71, 0.15), transparent);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body min-h-screen selection:bg-secondary selection:text-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#0e0e0e]/80 backdrop-blur-xl border-b border-[#ffffff]/10 shadow-[0_0_20px_rgba(0,227,253,0.04)]">
+<div class="flex justify-between items-center px-6 h-16 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#ff8f6f]">menu</span>
+<h1 class="font-['Space_Grotesk'] uppercase tracking-tighter font-bold text-xl text-[#ff8f6f]">DAILY_PERFORMANCE</h1>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-secondary/20">
+<img alt="User Profile" data-alt="User profile avatar portrait headshot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTiV0S7OAHtuHfLvitKdCBTpKnENGdjRjsXBQG4ZQyz---OszYn1QfoO1zXylYx2XaEYiu9UjFsAHcqmFk3gl081H7cELkBXxtSumjDaIDA27DbJ6FYnwMJ57UVHacnAH8V-fy7uYLS6rxI_v1Og3nbhiUeOLtutNJU16O4RxUXkFvfH4vp02PTXs9VIXrhx0cJjkb0cchDMRnon1LmemSSNsfg659YRwQ3H-TBpNuOcd841jQ_skNhfX8r6u3qeWCtDtJKSN4v1Xk"/>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-2xl mx-auto">
+<!-- Hero Header -->
+<section class="mb-10">
+<div class="flex items-center gap-2 mb-2">
+<div class="h-px w-8 bg-secondary"></div>
+<span class="text-secondary font-headline font-bold text-xs tracking-widest uppercase">System Initialization</span>
+</div>
+<h2 class="font-headline text-4xl font-black uppercase tracking-tight leading-none mb-4">
+                AUTO FILL <span class="text-primary">SETUP</span>
+</h2>
+<p class="text-on-surface-variant text-sm leading-relaxed max-w-md">
+                Configure your kinetic parameters. Our neural engine will architect a meal sequence optimized for peak athletic output and metabolic efficiency.
+            </p>
+</section>
+<!-- Form Layout -->
+<div class="space-y-8">
+<!-- Group 1: Caloric & Macro Density -->
+<section class="bg-surface-container-low p-6 rounded-lg relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-5">
+<span class="material-symbols-outlined text-6xl">analytics</span>
+</div>
+<h3 class="font-headline font-bold text-lg uppercase tracking-wider mb-6 flex items-center gap-2">
+<span class="w-1.5 h-4 bg-primary"></span>
+                    METABOLIC BOUNDARIES
+                </h3>
+<div class="space-y-6">
+<!-- Daily Calorie Target -->
+<div>
+<label class="block font-label text-[10px] font-bold tracking-widest text-on-surface-variant uppercase mb-2">Daily Calorie Target</label>
+<div class="flex items-end gap-3 group">
+<input class="bg-transparent border-0 border-b border-outline-variant/30 focus:border-secondary focus:ring-0 text-3xl font-headline font-bold w-full p-0 transition-colors" placeholder="2800" type="number"/>
+<span class="text-on-surface-variant font-headline font-medium pb-1">KCAL</span>
+</div>
+</div>
+<!-- Macro Split -->
+<div class="pt-4">
+<label class="block font-label text-[10px] font-bold tracking-widest text-on-surface-variant uppercase mb-4">Macro Split (P / C / F %)</label>
+<div class="grid grid-cols-3 gap-4">
+<div class="bg-surface-container p-3 rounded-sm border-l-2 border-primary">
+<span class="block text-[10px] text-on-surface-variant mb-1 uppercase font-bold tracking-tighter">Protein</span>
+<input class="w-full bg-transparent border-0 p-0 text-xl font-headline font-bold focus:ring-0" type="text" value="40%"/>
+</div>
+<div class="bg-surface-container p-3 rounded-sm border-l-2 border-secondary">
+<span class="block text-[10px] text-on-surface-variant mb-1 uppercase font-bold tracking-tighter">Carbs</span>
+<input class="w-full bg-transparent border-0 p-0 text-xl font-headline font-bold focus:ring-0" type="text" value="40%"/>
+</div>
+<div class="bg-surface-container p-3 rounded-sm border-l-2 border-tertiary">
+<span class="block text-[10px] text-on-surface-variant mb-1 uppercase font-bold tracking-tighter">Fats</span>
+<input class="w-full bg-transparent border-0 p-0 text-xl font-headline font-bold focus:ring-0" type="text" value="20%"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Group 2: Operational Frequency -->
+<section class="bg-surface-container-low p-6 rounded-lg">
+<h3 class="font-headline font-bold text-lg uppercase tracking-wider mb-6 flex items-center gap-2">
+<span class="w-1.5 h-4 bg-secondary"></span>
+                    LOGISTICS &amp; FREQUENCY
+                </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Number of Meals -->
+<div>
+<label class="block font-label text-[10px] font-bold tracking-widest text-on-surface-variant uppercase mb-4">Number of Meals</label>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center border border-outline-variant/30 text-on-surface-variant hover:border-secondary transition-colors">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<div class="flex-1 text-center font-headline font-black text-2xl">05</div>
+<button class="w-10 h-10 flex items-center justify-center border border-secondary text-secondary">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<!-- Goal Selection -->
+<div>
+<label class="block font-label text-[10px] font-bold tracking-widest text-on-surface-variant uppercase mb-4">Performance Goal</label>
+<select class="w-full bg-surface-container border-0 border-b border-outline-variant/30 focus:border-secondary focus:ring-0 text-sm font-bold uppercase tracking-wider appearance-none cursor-pointer py-3">
+<option>Fat Loss</option>
+<option selected="">Muscle Gain</option>
+<option>Maintenance</option>
+<option>Recomposition</option>
+</select>
+</div>
+</div>
+</section>
+<!-- Group 3: Exclusions -->
+<section class="bg-surface-container-low p-6 rounded-lg border-t border-primary/5">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline font-bold text-lg uppercase tracking-wider flex items-center gap-2">
+<span class="w-1.5 h-4 bg-tertiary"></span>
+                        FOOD EXCLUSIONS
+                    </h3>
+<span class="text-[10px] font-bold text-tertiary px-2 py-0.5 border border-tertiary/30 rounded-full">BIO-SAFETY</span>
+</div>
+<div class="space-y-4">
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center gap-1 bg-surface-container-highest px-3 py-1.5 text-xs font-bold uppercase tracking-tighter border-l border-error">
+                            Shellfish <span class="material-symbols-outlined text-xs cursor-pointer opacity-50">close</span>
+</span>
+<span class="inline-flex items-center gap-1 bg-surface-container-highest px-3 py-1.5 text-xs font-bold uppercase tracking-tighter border-l border-error">
+                            Cilantro <span class="material-symbols-outlined text-xs cursor-pointer opacity-50">close</span>
+</span>
+<span class="inline-flex items-center gap-1 bg-surface-container-highest px-3 py-1.5 text-xs font-bold uppercase tracking-tighter border-l border-error">
+                            Dairy <span class="material-symbols-outlined text-xs cursor-pointer opacity-50">close</span>
+</span>
+<button class="inline-flex items-center gap-1 bg-secondary/10 px-3 py-1.5 text-xs font-bold uppercase tracking-tighter text-secondary border border-secondary/20 hover:bg-secondary/20 transition-all">
+<span class="material-symbols-outlined text-xs">add</span> ADD EXCLUSION
+                        </button>
+</div>
+<div class="pt-2">
+<textarea class="w-full bg-transparent border border-outline-variant/10 focus:border-secondary focus:ring-0 text-sm p-4 h-24 italic text-on-surface-variant" placeholder="Specify any additional allergies or flavor profiles to avoid..."></textarea>
+</div>
+</div>
+</section>
+<!-- Final Action -->
+<div class="pt-4">
+<button class="group w-full bg-primary text-on-primary-fixed font-headline font-black text-lg py-5 px-8 flex justify-between items-center tracking-tighter uppercase rounded-sm hover:bg-primary-dim active:scale-[0.98] transition-all">
+<span>GENERATE PERFORMANCE PLAN</span>
+<span class="material-symbols-outlined group-hover:translate-x-2 transition-transform">bolt</span>
+</button>
+<div class="mt-4 flex items-center justify-center gap-4">
+<div class="h-[1px] flex-1 bg-outline-variant/20"></div>
+<span class="text-[9px] font-bold tracking-[0.3em] text-on-surface-variant uppercase">Neural Engine Sync Active</span>
+<div class="h-[1px] flex-1 bg-outline-variant/20"></div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 h-20 bg-[#0e0e0e]/90 backdrop-blur-2xl border-t border-[#ffffff]/10">
+<div class="flex justify-around items-center w-full px-4 pb-4">
+<!-- DIARY -->
+<a class="flex flex-col items-center justify-center text-[#adaaaa] opacity-60 hover:opacity-100 hover:text-[#00e3fd] transition-all active:translate-y-[-2px]" href="#">
+<span class="material-symbols-outlined">event_note</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold tracking-widest uppercase">DIARY</span>
+</a>
+<!-- TRAIN -->
+<a class="flex flex-col items-center justify-center text-[#adaaaa] opacity-60 hover:opacity-100 hover:text-[#00e3fd] transition-all active:translate-y-[-2px]" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold tracking-widest uppercase">TRAIN</span>
+</a>
+<!-- FUEL (ACTIVE) -->
+<a class="flex flex-col items-center justify-center text-[#ff8f6f] scale-110 active:translate-y-[-2px]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold tracking-widest uppercase">FUEL</span>
+</a>
+<!-- ELITE -->
+<a class="flex flex-col items-center justify-center text-[#adaaaa] opacity-60 hover:opacity-100 hover:text-[#00e3fd] transition-all active:translate-y-[-2px]" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Space_Grotesk'] text-[10px] font-bold tracking-widest uppercase">ELITE</span>
+</a>
+</div>
+</nav>
+</body></html>

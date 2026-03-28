@@ -1,9 +1,9 @@
 import React, { startTransition, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
-import { Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { SectionCard } from '../components/SectionCard';
+import { EmptyStateCard } from '../components/EmptyStateCard';
 import { getClipboardMeal, getDiaryDay, saveDiaryDay, setClipboardMeal } from '../db/diaryRepo';
-import { ensureUserFood, findFoodByBarcode, listFoods, searchFoodsCatalog } from '../db/foodsRepo';
+import { ensureUserFood, findFoodByBarcode, searchFoodsCatalog } from '../db/foodsRepo';
 import { calculateDaySummary, calculateMealTotals } from '../domain/calculations';
 import { formatCompactDateLabel, formatDateLabel, formatFullDateLabel, getTodayKey, getWeekKeys, shiftDateKey } from '../domain/dates';
 import { applyFoodToEntry, createEmptyEntry, normalizeMealEntries, syncEntryFromAmount, syncEntryServingFromMacros } from '../domain/diary';
@@ -145,18 +145,20 @@ export function NutritionScreen({ settings, foodsVersion, onDiarySaved, onOpenFo
   const filteredFoods = foods.slice(0, 8);
   const recentFoods = useMemo(() => {
     const usedNames = new Set<string>();
-    return day?.meals
-      .flatMap((meal) => meal.entries)
-      .filter((entry) => entry.itemName.trim())
-      .map((entry) => foods.find((food) => food.id === entry.foodItemId) ?? null)
-      .filter((food): food is FoodItem => {
-        if (!food || usedNames.has(food.id)) {
-          return false;
-        }
-        usedNames.add(food.id);
-        return true;
-      })
-      .slice(0, 6) ?? [];
+    return (
+      day?.meals
+        .flatMap((meal) => meal.entries)
+        .filter((entry) => entry.itemName.trim())
+        .map((entry) => foods.find((food) => food.id === entry.foodItemId) ?? null)
+        .filter((food): food is FoodItem => {
+          if (!food || usedNames.has(food.id)) {
+            return false;
+          }
+          usedNames.add(food.id);
+          return true;
+        })
+        .slice(0, 6) ?? []
+    );
   }, [day, foods]);
 
   function updateDay(updater: (current: DiaryDay) => DiaryDay) {
@@ -224,59 +226,95 @@ export function NutritionScreen({ settings, foodsVersion, onDiarySaved, onOpenFo
 
   if (!day || !summary) {
     return (
-      <SectionCard title="Nutrition" subtitle="Loading planner...">
-        <Text style={{ color: colors.muted }}>Preparing meals and food suggestions.</Text>
-      </SectionCard>
+      <View style={[styles.loadingCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <Text style={[styles.loadingTitle, { color: colors.text }]}>Loading fuel planner</Text>
+        <Text style={[styles.loadingBody, { color: colors.muted }]}>Preparing diary day, foods, and saved templates.</Text>
+      </View>
     );
   }
 
   return (
     <View style={styles.screen}>
-      <View style={[styles.heroCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+      <View style={[styles.hero, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <View style={styles.heroHeader}>
+          <View style={styles.heroCopy}>
+            <Text style={[styles.eyebrow, { color: colors.accentSecondary }]}>DAILY FUEL PLANNER</Text>
+            <Text style={[styles.title, { color: colors.text }]}>Search, auto-fill, and saved meals are finally on the same surface.</Text>
+            <Text style={[styles.subtitle, { color: colors.muted }]}>{formatFullDateLabel(selectedDate)}</Text>
+          </View>
+          <SaveBadge state={saveState} />
+        </View>
+
         <View style={styles.dateNav}>
           <Pressable
-            style={[styles.navArrow, { borderColor: colors.border }]}
+            style={[styles.navButton, { backgroundColor: colors.surfaceMuted, borderColor: colors.border }]}
             onPress={() => setSelectedDate(shiftDateKey(selectedDate, -1))}
           >
-            <Text style={[styles.navArrowText, { color: colors.text }]}>‹</Text>
+            <Text style={[styles.navLabel, { color: colors.text }]}>Prev</Text>
           </Pressable>
           <View style={styles.dateDisplay}>
-            <Text style={[styles.dateLabel, { color: colors.text }]}>{formatCompactDateLabel(selectedDate)}</Text>
+            <Text style={[styles.dateTitle, { color: colors.text }]}>{formatCompactDateLabel(selectedDate)}</Text>
+            <Text style={[styles.dateBody, { color: colors.muted }]}>Active diary day</Text>
           </View>
           <Pressable
-            style={[styles.navArrow, { borderColor: colors.border }]}
+            style={[styles.navButton, { backgroundColor: colors.surfaceMuted, borderColor: colors.border }]}
             onPress={() => setSelectedDate(shiftDateKey(selectedDate, 1))}
           >
-            <Text style={[styles.navArrowText, { color: colors.text }]}>›</Text>
+            <Text style={[styles.navLabel, { color: colors.text }]}>Next</Text>
           </Pressable>
         </View>
 
-        <View style={styles.macroRow}>
-          <MetricCard label="Calories" value={`${Math.round(summary.totals.calories)}`} helper={`Goal ${Math.round(summary.goalCalories)}`} />
-          <MetricCard label="Protein" value={`${summary.protein.grams}g`} helper={`${summary.protein.percentage}% · target ${day.proteinTarget}`} />
-          <MetricCard label="Carbs" value={`${summary.carbs.grams}g`} helper={`${summary.carbs.percentage}% · target ${day.carbTarget}`} />
-          <MetricCard label="Fat" value={`${summary.fat.grams}g`} helper={`${summary.fat.percentage}% · target ${day.fatTarget}`} />
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View style={styles.weekRow}>
+            {weekKeys.map((dayKey) => {
+              const active = dayKey === selectedDate;
+              return (
+                <Pressable
+                  key={dayKey}
+                  onPress={() => setSelectedDate(dayKey)}
+                  style={[
+                    styles.weekChip,
+                    {
+                      backgroundColor: active ? colors.accent : colors.surfaceMuted,
+                      borderColor: active ? colors.accent : colors.border,
+                    },
+                  ]}
+                >
+                  <Text style={[styles.weekChipLabel, { color: active ? '#000000' : colors.text }]}>{formatDateLabel(dayKey)}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </ScrollView>
+
+        <View style={styles.metricRow}>
+          <MetricCard label="Calories" value={`${Math.round(summary.totals.calories)}`} helper={`goal ${Math.round(summary.goalCalories)}`} tone={colors.accent} />
+          <MetricCard label="Protein" value={`${summary.protein.grams}g`} helper={`${summary.protein.delta}g to target`} tone={colors.accentSecondary} />
+          <MetricCard label="Carbs" value={`${summary.carbs.grams}g`} helper={`${summary.carbs.delta}g to target`} tone={colors.premium} />
+          <MetricCard label="Fat" value={`${summary.fat.grams}g`} helper={`${summary.fat.delta}g to target`} tone={colors.muted} />
         </View>
 
-        <View style={styles.primaryActions}>
-          <Pressable style={[styles.heroAction, { backgroundColor: colors.accent }]} onPress={async () => {
-            if (!permission?.granted) {
-              await requestPermission();
-            }
-            setScannerOpen(true);
-          }}>
-            <Text style={styles.heroActionLabel}>Scan Barcode</Text>
+        <View style={styles.heroActions}>
+          <Pressable
+            style={[styles.primaryAction, { backgroundColor: colors.accent }]}
+            onPress={async () => {
+              if (!permission?.granted) {
+                await requestPermission();
+              }
+              setScannerOpen(true);
+            }}
+          >
+            <Text style={styles.primaryActionLabel}>Scan barcode</Text>
           </Pressable>
-          <Pressable style={[styles.heroAction, { backgroundColor: colors.accentSecondary }]} onPress={() => setFoodQuery('')}>
-            <Text style={styles.heroActionLabel}>Search Food</Text>
-          </Pressable>
-          <Pressable style={[styles.heroActionGhost, { backgroundColor: colors.surfaceMuted, borderColor: colors.border }]} onPress={onOpenFoods}>
-            <Text style={[styles.heroActionGhostLabel, { color: colors.text }]}>Food Library</Text>
+          <Pressable style={[styles.secondaryAction, { borderColor: colors.border }]} onPress={onOpenFoods}>
+            <Text style={[styles.secondaryActionLabel, { color: colors.text }]}>Open fuel database</Text>
           </Pressable>
         </View>
       </View>
 
-      <SectionCard title="Quick Add" subtitle="Select a meal and search for foods to add">
+      <View style={[styles.quickAddCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <Text style={[styles.sectionEyebrow, { color: colors.accent }]}>SAVED MEALS / TEMPLATES</Text>
+
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.mealSelectorRow}>
             {day.meals.map((meal) => {
@@ -289,15 +327,13 @@ export function NutritionScreen({ settings, foodsVersion, onDiarySaved, onOpenFo
                   style={[
                     styles.mealSelector,
                     {
-                      backgroundColor: active ? colors.accent : colors.surfaceMuted,
+                      backgroundColor: active ? colors.surfaceMuted : colors.background,
                       borderColor: active ? colors.accent : colors.border,
                     },
                   ]}
                 >
-                  <Text style={[styles.mealSelectorTitle, { color: active ? colors.surface : colors.text }]}>
-                    {meal.title || `Meal ${meal.mealIndex + 1}`}
-                  </Text>
-                  <Text style={[styles.mealSelectorMeta, { color: active ? colors.surface : colors.muted }]}>
+                  <Text style={[styles.mealSelectorTitle, { color: colors.text }]}>{meal.title || `Meal ${meal.mealIndex + 1}`}</Text>
+                  <Text style={[styles.mealSelectorMeta, { color: active ? colors.accent : colors.muted }]}>
                     {Math.round(totals.calories)} kcal
                   </Text>
                 </Pressable>
@@ -309,83 +345,79 @@ export function NutritionScreen({ settings, foodsVersion, onDiarySaved, onOpenFo
         <TextInput
           value={foodQuery}
           onChangeText={setFoodQuery}
-          placeholder="Search foods..."
+          placeholder={`Search food for ${selectedMeal?.title || 'selected meal'}`}
           placeholderTextColor={colors.muted}
           style={[styles.searchInput, { borderColor: colors.border, backgroundColor: colors.background, color: colors.text }]}
         />
 
         {recentFoods.length > 0 ? (
-          <View style={styles.recentRow}>
-            {recentFoods.map((food) => (
-              <Pressable
-                key={food.id}
-                style={[styles.recentChip, { borderColor: colors.border, backgroundColor: colors.surfaceMuted }]}
-                onPress={() => void addFoodToMeal(food)}
-              >
-                <Text style={[styles.recentLabel, { color: colors.text }]}>{food.name}</Text>
-              </Pressable>
-            ))}
+          <View style={styles.recentSection}>
+            <Text style={[styles.label, { color: colors.muted }]}>Recent foods</Text>
+            <View style={styles.recentRow}>
+              {recentFoods.map((food) => (
+                <Pressable
+                  key={food.id}
+                  style={[styles.recentChip, { borderColor: colors.border, backgroundColor: colors.surfaceMuted }]}
+                  onPress={() => void addFoodToMeal(food)}
+                >
+                  <Text style={[styles.recentLabel, { color: colors.text }]}>{food.name}</Text>
+                </Pressable>
+              ))}
+            </View>
           </View>
         ) : null}
 
         <View style={styles.foodList}>
-          {filteredFoods.map((food) => (
-            <View key={food.id} style={[styles.foodCard, { borderColor: colors.border, backgroundColor: colors.surfaceMuted }]}>
-              <View style={styles.foodCardMeta}>
-                <Text style={[styles.foodCardTitle, { color: colors.text }]}>{food.name}</Text>
-                <Text style={[styles.foodCardSubtitle, { color: colors.muted }]}>
-                  {food.servingSize} {food.servingUnit} · {food.calories} kcal
-                  {food.barcode ? ` · code ${food.barcode}` : ''}
-                </Text>
-                <View style={[styles.sourceBadge, { backgroundColor: food.scope === 'user' ? colors.accentSoft : colors.surface, borderColor: colors.border }]}>
-                  <Text style={[styles.sourceBadgeLabel, { color: food.scope === 'user' ? colors.accent : colors.muted }]}>
-                    {food.scope}
+          {filteredFoods.length > 0 ? (
+            filteredFoods.map((food) => (
+              <View key={food.id} style={[styles.foodCard, { backgroundColor: colors.surfaceMuted, borderColor: colors.border }]}>
+                <View style={styles.foodCardCopy}>
+                  <Text style={[styles.foodTitle, { color: colors.text }]}>{food.name}</Text>
+                  <Text style={[styles.foodBody, { color: colors.muted }]}>
+                    {food.servingSize} {food.servingUnit} • {food.calories} kcal
+                    {food.brand ? ` • ${food.brand}` : ''}
                   </Text>
                 </View>
+                <Pressable style={[styles.smallButton, { backgroundColor: colors.accent }]} onPress={() => void addFoodToMeal(food)}>
+                  <Text style={styles.smallButtonLabel}>Add</Text>
+                </Pressable>
               </View>
-              <Pressable style={[styles.smallPrimaryButton, { backgroundColor: colors.accent }]} onPress={() => void addFoodToMeal(food)}>
-                <Text style={styles.smallPrimaryLabel}>Add</Text>
-              </Pressable>
-            </View>
-          ))}
+            ))
+          ) : (
+            <EmptyStateCard title="No foods match this search" body="Try a broader search or add the food from the database screen." />
+          )}
         </View>
+      </View>
 
-        <View style={styles.barcodePanel}>
-          <View style={styles.barcodeHeader}>
-            <Text style={[styles.barcodeTitle, { color: colors.text }]}>Barcode add</Text>
-            <Pressable style={[styles.secondaryButton, { borderColor: colors.border }]} onPress={onOpenFoods}>
-              <Text style={[styles.secondaryLabel, { color: colors.text }]}>Open Foods DB</Text>
-            </Pressable>
-          </View>
+      <View style={styles.row}>
+        <View style={[styles.barcodeCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.sectionEyebrow, { color: colors.accentSecondary }]}>ADD FOOD / SEARCH FOOD</Text>
           <TextInput
             value={barcodeInput}
             onChangeText={setBarcodeInput}
-            placeholder="Scan or paste a barcode"
+            placeholder="Paste or scan a barcode"
             placeholderTextColor={colors.muted}
             style={[styles.searchInput, { borderColor: colors.border, backgroundColor: colors.background, color: colors.text }]}
           />
+
           {barcodeMatch ? (
-            <View style={[styles.barcodeResult, { borderColor: colors.border, backgroundColor: colors.surfaceMuted }]}>
-              <View style={styles.foodCardMeta}>
-                <Text style={[styles.foodCardTitle, { color: colors.text }]}>{barcodeMatch.name}</Text>
-                <Text style={[styles.foodCardSubtitle, { color: colors.muted }]}>
-                  Matched by barcode from {barcodeMatch.scope} catalog
-                </Text>
+            <View style={[styles.barcodeResult, { backgroundColor: colors.surfaceMuted, borderColor: colors.border }]}>
+              <View style={styles.foodCardCopy}>
+                <Text style={[styles.foodTitle, { color: colors.text }]}>{barcodeMatch.name}</Text>
+                <Text style={[styles.foodBody, { color: colors.muted }]}>Matched from the {barcodeMatch.scope} catalog</Text>
               </View>
-              <Pressable style={[styles.smallPrimaryButton, { backgroundColor: colors.accent }]} onPress={() => void addFoodToMeal(barcodeMatch)}>
-                <Text style={styles.smallPrimaryLabel}>Add to Meal</Text>
+              <Pressable style={[styles.smallButton, { backgroundColor: colors.accent }]} onPress={() => void addFoodToMeal(barcodeMatch)}>
+                <Text style={styles.smallButtonLabel}>Add to meal</Text>
               </Pressable>
             </View>
           ) : barcodeInput.trim() ? (
-            <Text style={[styles.helperText, { color: colors.muted }]}>
-              No match found. Add this item to your Foods DB to recognize it next time.
-            </Text>
+            <EmptyStateCard title="Barcode not recognized" body="Add the product to the fuel database once and reuse it after that." />
           ) : null}
 
           {CameraView ? (
-            <View style={styles.scannerArea}>
+            <View style={styles.scannerSection}>
               <Pressable
-                style={[styles.secondaryButton, { borderColor: colors.border }]}
+                style={[styles.secondaryAction, { borderColor: colors.border }]}
                 onPress={async () => {
                   if (!permission?.granted) {
                     await requestPermission();
@@ -393,10 +425,11 @@ export function NutritionScreen({ settings, foodsVersion, onDiarySaved, onOpenFo
                   setScannerOpen((value) => !value);
                 }}
               >
-                <Text style={[styles.secondaryLabel, { color: colors.text }]}>
-                  {scannerOpen ? 'Hide Scanner' : 'Open Scanner'}
+                <Text style={[styles.secondaryActionLabel, { color: colors.text }]}>
+                  {scannerOpen ? 'Hide scanner' : 'Open scanner'}
                 </Text>
               </Pressable>
+
               {scannerOpen ? (
                 <View style={[styles.cameraShell, { borderColor: colors.border }]}>
                   <CameraView
@@ -413,98 +446,113 @@ export function NutritionScreen({ settings, foodsVersion, onDiarySaved, onOpenFo
               ) : null}
             </View>
           ) : (
-            <Text style={[styles.helperText, { color: colors.muted }]}>
-              Camera scanning requires additional setup. Install expo-camera to enable live scanning.
-            </Text>
+            <Text style={[styles.helperText, { color: colors.muted }]}>Camera scanning requires expo-camera support in the current runtime.</Text>
           )}
         </View>
-      </SectionCard>
 
-      <SectionCard title="Daily Targets" subtitle="Customize your goals for today">
-        <View style={styles.targetGrid}>
-          <NumericField label="Calorie Goal" value={day.calorieGoal} onChangeValue={(value) => updateDay((current) => ({ ...current, calorieGoal: value }))} />
-          <NumericField label="Protein Target" value={day.proteinTarget} onChangeValue={(value) => updateDay((current) => ({ ...current, proteinTarget: value }))} />
-          <NumericField label="Carb Target" value={day.carbTarget} onChangeValue={(value) => updateDay((current) => ({ ...current, carbTarget: value }))} />
-          <NumericField label="Fat Target" value={day.fatTarget} onChangeValue={(value) => updateDay((current) => ({ ...current, fatTarget: value }))} />
-          <NumericField label="Manual Adj." value={day.manualCalorieAdjustment} onChangeValue={(value) => updateDay((current) => ({ ...current, manualCalorieAdjustment: value }))} />
+        <View style={[styles.targetsCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.sectionEyebrow, { color: colors.premium }]}>AUTO FILL RESULT PLAN</Text>
+          <View style={styles.targetGrid}>
+            <NumericField label="Calories" value={day.calorieGoal} onChangeValue={(value) => updateDay((current) => ({ ...current, calorieGoal: value }))} />
+            <NumericField label="Protein" value={day.proteinTarget} onChangeValue={(value) => updateDay((current) => ({ ...current, proteinTarget: value }))} />
+            <NumericField label="Carbs" value={day.carbTarget} onChangeValue={(value) => updateDay((current) => ({ ...current, carbTarget: value }))} />
+            <NumericField label="Fat" value={day.fatTarget} onChangeValue={(value) => updateDay((current) => ({ ...current, fatTarget: value }))} />
+            <NumericField label="Calorie adj." value={day.manualCalorieAdjustment} onChangeValue={(value) => updateDay((current) => ({ ...current, manualCalorieAdjustment: value }))} />
+          </View>
         </View>
-        <Text style={[styles.helperText, { color: saveState === 'error' ? colors.danger : colors.muted }]}>
-          {saveState === 'saving' ? 'Saving...' : saveState === 'saved' ? 'Saved' : saveState === 'error' ? 'Save failed' : 'Auto-save enabled'}
-        </Text>
-      </SectionCard>
+      </View>
 
       {day.meals.map((meal) => {
         const mealTotals = calculateMealTotals(meal.entries);
+        const mealHasContent = meal.entries.some(
+          (entry) =>
+            entry.itemName.trim() ||
+            entry.foodItemId ||
+            entry.calories > 0 ||
+            entry.carbs > 0 ||
+            entry.protein > 0 ||
+            entry.fat > 0
+        );
+
         return (
-          <SectionCard
-            key={meal.id}
-            title={meal.title || `Meal ${meal.mealIndex + 1}`}
-            subtitle={`${Math.round(mealTotals.calories)} calories • ${Math.round(mealTotals.protein)}g protein`}
-          >
-            <View style={styles.mealHeaderRow}>
-              <TextInput
-                value={meal.title}
-                onChangeText={(value) => updateMeal(meal.id, (current) => ({ ...current, title: value }))}
-                placeholder={`Meal ${meal.mealIndex + 1}`}
-                placeholderTextColor={colors.muted}
-                style={[styles.mealTitleInput, { borderColor: colors.border, backgroundColor: colors.background, color: colors.text }]}
-              />
+          <View key={meal.id} style={[styles.mealCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+            <View style={styles.mealHeader}>
+              <View style={styles.mealHeaderCopy}>
+                <Text style={[styles.sectionEyebrow, { color: selectedMeal?.id === meal.id ? colors.accent : colors.muted }]}>
+                  {selectedMeal?.id === meal.id ? 'SELECTED MEAL' : `MEAL ${meal.mealIndex + 1}`}
+                </Text>
+                <TextInput
+                  value={meal.title}
+                  onChangeText={(value) => updateMeal(meal.id, (current) => ({ ...current, title: value }))}
+                  placeholder={`Meal ${meal.mealIndex + 1}`}
+                  placeholderTextColor={colors.muted}
+                  style={[styles.mealTitleInput, { borderColor: colors.border, backgroundColor: colors.background, color: colors.text }]}
+                />
+                <Text style={[styles.mealSummary, { color: colors.muted }]}>
+                  {Math.round(mealTotals.calories)} kcal • {Math.round(mealTotals.protein)}g protein
+                </Text>
+              </View>
+
               <View style={styles.inlineActions}>
-                <ActionButton label="Copy" onPress={() => void handleCopyMeal(meal)} />
-                <ActionButton label="Paste" onPress={() => void handlePasteMeal(meal.id)} disabled={!clipboardReady} />
-                <ActionButton label="Clear" onPress={() => handleClearMeal(meal.id)} />
+                <MiniAction label="Copy" onPress={() => void handleCopyMeal(meal)} />
+                <MiniAction label="Paste" onPress={() => void handlePasteMeal(meal.id)} disabled={!clipboardReady} />
+                <MiniAction label="Clear" onPress={() => handleClearMeal(meal.id)} />
               </View>
             </View>
 
+            {!mealHasContent ? (
+              <EmptyStateCard title="Nothing logged yet" body="Use search, barcode add, or the manual rows below to build the meal." />
+            ) : null}
+
             <View style={styles.entryList}>
-              {meal.entries.map((entry) => (
-                <View key={entry.id} style={[styles.entryCard, { borderColor: colors.border, backgroundColor: colors.surfaceMuted }]}>
-                  <View style={styles.entryTopRow}>
-                    <TextInput
-                      value={entry.itemName}
-                      onChangeText={(value) =>
-                        updateEntry(meal.id, entry.id, (current) => ({
-                          ...current,
-                          itemName: value,
-                          foodItemId: null,
-                        }))
-                      }
-                      placeholder="Custom item or quick note"
-                      placeholderTextColor={colors.muted}
-                      style={[styles.entryNameInput, { borderColor: colors.border, backgroundColor: colors.surface, color: colors.text }]}
-                    />
-                    <Pressable
-                      style={[styles.secondaryButton, { borderColor: colors.border }]}
-                      onPress={() =>
-                        updateMeal(meal.id, (current) => ({
-                          ...current,
-                          entries: [
-                            ...current.entries,
-                            {
-                              ...entry,
-                              id: `${entry.id}_copy_${Date.now()}`,
-                              rowOrder: current.entries.length,
-                            },
-                          ],
-                        }))
-                      }
-                    >
-                      <Text style={[styles.secondaryLabel, { color: colors.text }]}>Duplicate</Text>
-                    </Pressable>
-                    <Pressable
-                      style={[styles.secondaryButton, { borderColor: colors.border }]}
-                      onPress={() =>
-                        updateMeal(meal.id, (current) =>
-                          normalizeMealEntries({
+              {meal.entries.map((entry, index) => (
+                <View key={entry.id} style={[styles.entryCard, { backgroundColor: colors.surfaceMuted, borderColor: colors.border }]}>
+                  <View style={styles.entryHeader}>
+                    <Text style={[styles.entryIndex, { color: colors.muted }]}>Entry {index + 1}</Text>
+                    <View style={styles.inlineActions}>
+                      <MiniAction
+                        label="Duplicate"
+                        onPress={() =>
+                          updateMeal(meal.id, (current) => ({
                             ...current,
-                            entries: current.entries.filter((row) => row.id !== entry.id),
-                          })
-                        )
-                      }
-                    >
-                      <Text style={[styles.secondaryLabel, { color: colors.text }]}>Delete</Text>
-                    </Pressable>
+                            entries: [
+                              ...current.entries,
+                              {
+                                ...entry,
+                                id: `${entry.id}_copy_${Date.now()}`,
+                                rowOrder: current.entries.length,
+                              },
+                            ],
+                          }))
+                        }
+                      />
+                      <MiniAction
+                        label="Delete"
+                        onPress={() =>
+                          updateMeal(meal.id, (current) =>
+                            normalizeMealEntries({
+                              ...current,
+                              entries: current.entries.filter((row) => row.id !== entry.id),
+                            })
+                          )
+                        }
+                      />
+                    </View>
                   </View>
+
+                  <TextInput
+                    value={entry.itemName}
+                    onChangeText={(value) =>
+                      updateEntry(meal.id, entry.id, (current) => ({
+                        ...current,
+                        itemName: value,
+                        foodItemId: null,
+                      }))
+                    }
+                    placeholder="Food name or custom note"
+                    placeholderTextColor={colors.muted}
+                    style={[styles.entryNameInput, { borderColor: colors.border, backgroundColor: colors.background, color: colors.text }]}
+                  />
 
                   <View style={styles.entryGrid}>
                     <NumericField compact label="Amount" value={entry.amount} onChangeValue={(value) => updateEntry(meal.id, entry.id, (current) => syncEntryFromAmount(current, value))} />
@@ -517,15 +565,8 @@ export function NutritionScreen({ settings, foodsVersion, onDiarySaved, onOpenFo
               ))}
             </View>
 
-            <View style={[styles.mealFooter, { borderColor: colors.border, backgroundColor: colors.surfaceMuted }]}>
-              <Text style={[styles.mealFooterTitle, { color: colors.text }]}>Meal Total</Text>
-              <Text style={[styles.mealFooterMeta, { color: colors.muted }]}>
-                {mealTotals.calories} kcal · {mealTotals.protein}p · {mealTotals.carbs}c · {mealTotals.fat}f
-              </Text>
-            </View>
-
             <Pressable
-              style={[styles.secondaryButton, { borderColor: colors.border }]}
+              style={[styles.secondaryAction, { borderColor: colors.border }]}
               onPress={() =>
                 updateMeal(meal.id, (current) => ({
                   ...current,
@@ -533,36 +574,70 @@ export function NutritionScreen({ settings, foodsVersion, onDiarySaved, onOpenFo
                 }))
               }
             >
-              <Text style={[styles.secondaryLabel, { color: colors.text }]}>Add Custom Row</Text>
+              <Text style={[styles.secondaryActionLabel, { color: colors.text }]}>Add manual row</Text>
             </Pressable>
-          </SectionCard>
+          </View>
         );
       })}
-
-      <View style={[styles.fabDock, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-        <Pressable style={[styles.fabButton, { backgroundColor: colors.accent }]} onPress={async () => {
-          if (!permission?.granted) {
-            await requestPermission();
-          }
-          setScannerOpen(true);
-        }}>
-          <Text style={styles.fabLabel}>Scan</Text>
-        </Pressable>
-        <Pressable style={[styles.fabButton, { backgroundColor: colors.accentSecondary }]} onPress={() => setSelectedMealId(day.meals[0]?.id ?? null)}>
-          <Text style={styles.fabLabel}>Meals</Text>
-        </Pressable>
-        <Pressable style={[styles.fabButton, { backgroundColor: colors.surfaceMuted }]} onPress={() => setFoodQuery('')}>
-          <Text style={[styles.fabGhostLabel, { color: colors.text }]}>Search</Text>
-        </Pressable>
-      </View>
     </View>
   );
+
+  function MetricCard({
+    label,
+    value,
+    helper,
+    tone,
+  }: {
+    label: string;
+    value: string;
+    helper: string;
+    tone: string;
+  }) {
+    return (
+      <View style={[styles.metricCard, { backgroundColor: colors.surfaceMuted, borderColor: colors.border }]}>
+        <Text style={[styles.metricLabel, { color: colors.muted }]}>{label}</Text>
+        <Text style={[styles.metricValue, { color: tone }]}>{value}</Text>
+        <Text style={[styles.metricHelper, { color: colors.muted }]}>{helper}</Text>
+      </View>
+    );
+  }
+
+  function SaveBadge({ state }: { state: 'idle' | 'saving' | 'saved' | 'error' }) {
+    const tone =
+      state === 'saved' ? colors.premium : state === 'saving' ? colors.accentSecondary : state === 'error' ? colors.danger : colors.muted;
+
+    return (
+      <View style={[styles.saveBadge, { borderColor: tone }]}>
+        <Text style={[styles.saveBadgeLabel, { color: tone }]}>
+          {state === 'saving' ? 'Saving' : state === 'saved' ? 'Saved' : state === 'error' ? 'Error' : 'Ready'}
+        </Text>
+      </View>
+    );
+  }
+
+  function MiniAction({ label, onPress, disabled }: { label: string; onPress: () => void; disabled?: boolean }) {
+    return (
+      <Pressable
+        style={[
+          styles.miniAction,
+          {
+            borderColor: colors.border,
+            opacity: disabled ? 0.45 : 1,
+          },
+        ]}
+        onPress={onPress}
+        disabled={disabled}
+      >
+        <Text style={[styles.miniActionLabel, { color: colors.text }]}>{label}</Text>
+      </Pressable>
+    );
+  }
 
   function NumericField({
     label,
     value,
     onChangeValue,
-    compact = false,
+    compact,
   }: {
     label: string;
     value: number;
@@ -570,63 +645,15 @@ export function NutritionScreen({ settings, foodsVersion, onDiarySaved, onOpenFo
     compact?: boolean;
   }) {
     return (
-      <View style={[styles.numericField, compact ? styles.numericFieldCompact : null]}>
-        <Text style={[styles.numericLabel, { color: colors.muted }]}>{label}</Text>
+      <View style={[styles.field, compact ? styles.compactField : null]}>
+        <Text style={[styles.fieldLabel, { color: colors.muted }]}>{label}</Text>
         <TextInput
           value={String(value)}
           onChangeText={(text) => onChangeValue(Number(text) || 0)}
           keyboardType="numeric"
-          style={[
-            styles.numericInput,
-            compact ? styles.numericInputCompact : null,
-            { borderColor: colors.border, backgroundColor: colors.background, color: colors.text },
-          ]}
+          style={[styles.fieldInput, { borderColor: colors.border, backgroundColor: colors.background, color: colors.text }]}
         />
       </View>
-    );
-  }
-
-  function MetricCard({
-    label,
-    value,
-    helper,
-  }: {
-    label: string;
-    value: string;
-    helper: string;
-  }) {
-    return (
-      <View style={[styles.metricCard, { backgroundColor: colors.surfaceMuted, borderColor: colors.border }]}>
-        <Text style={[styles.metricLabel, { color: colors.muted }]}>{label}</Text>
-        <Text style={[styles.metricValue, { color: colors.text }]}>{value}</Text>
-        <Text style={[styles.metricHelper, { color: colors.muted }]}>{helper}</Text>
-      </View>
-    );
-  }
-
-  function ActionButton({
-    label,
-    onPress,
-    disabled,
-  }: {
-    label: string;
-    onPress: () => void;
-    disabled?: boolean;
-  }) {
-    return (
-      <Pressable
-        onPress={onPress}
-        disabled={disabled}
-        style={[
-          styles.secondaryButton,
-          {
-            borderColor: colors.border,
-            opacity: disabled ? 0.4 : 1,
-          },
-        ]}
-      >
-        <Text style={[styles.secondaryLabel, { color: colors.text }]}>{label}</Text>
-      </Pressable>
     );
   }
 }
@@ -635,102 +662,175 @@ const styles = StyleSheet.create({
   screen: {
     gap: 16,
   },
-  heroCard: {
+  loadingCard: {
     borderWidth: 1,
     borderRadius: 24,
-    padding: 16,
+    padding: 18,
+    gap: 6,
+  },
+  loadingTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+  },
+  loadingBody: {
+    fontSize: 14,
+  },
+  hero: {
+    borderWidth: 1,
+    borderRadius: 28,
+    padding: 18,
     gap: 14,
-    shadowColor: '#000000',
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    elevation: 3,
+  },
+  heroHeader: {
+    flexDirection: 'row',
+    gap: 12,
+    alignItems: 'flex-start',
+  },
+  heroCopy: {
+    flex: 1,
+    gap: 6,
+  },
+  eyebrow: {
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 1,
+  },
+  title: {
+    fontSize: 30,
+    lineHeight: 34,
+    fontWeight: '900',
+  },
+  subtitle: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  saveBadge: {
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  saveBadgeLabel: {
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
   },
   dateNav: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     gap: 12,
   },
-  navArrow: {
-    width: 40,
-    height: 40,
+  navButton: {
+    minWidth: 70,
+    minHeight: 44,
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  navArrowText: {
-    fontSize: 24,
-    fontWeight: '700',
+  navLabel: {
+    fontSize: 13,
+    fontWeight: '800',
   },
   dateDisplay: {
     flex: 1,
-    alignItems: 'center',
+    gap: 2,
   },
-  dateLabel: {
+  dateTitle: {
     fontSize: 18,
+    fontWeight: '900',
+  },
+  dateBody: {
+    fontSize: 12,
+  },
+  weekRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  weekChip: {
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 9,
+  },
+  weekChipLabel: {
+    fontSize: 12,
     fontWeight: '800',
   },
-  macroRow: {
+  metricRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
-  },
-  primaryActions: {
     gap: 10,
   },
-  heroAction: {
-    borderRadius: 20,
-    paddingVertical: 15,
-    alignItems: 'center',
-  },
-  heroActionLabel: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '800',
-  },
-  heroActionGhost: {
-    borderWidth: 1,
-    borderRadius: 20,
-    paddingVertical: 15,
-    alignItems: 'center',
-  },
-  heroActionGhostLabel: {
-    fontSize: 14,
-    fontWeight: '800',
-  },
   metricCard: {
-    minWidth: 150,
+    minWidth: 140,
     flexGrow: 1,
     borderWidth: 1,
-    borderRadius: 20,
-    padding: 14,
+    borderRadius: 18,
+    padding: 12,
     gap: 4,
   },
   metricLabel: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 11,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
   },
   metricValue: {
-    fontSize: 28,
-    fontWeight: '800',
+    fontSize: 26,
+    fontWeight: '900',
   },
   metricHelper: {
     fontSize: 12,
+  },
+  heroActions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  primaryAction: {
+    minHeight: 46,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+  },
+  primaryActionLabel: {
+    color: '#000000',
+    fontSize: 13,
+    fontWeight: '900',
+  },
+  secondaryAction: {
+    minHeight: 46,
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+  },
+  secondaryActionLabel: {
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  quickAddCard: {
+    borderWidth: 1,
+    borderRadius: 28,
+    padding: 18,
+    gap: 12,
+  },
+  sectionEyebrow: {
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 1,
   },
   mealSelectorRow: {
     flexDirection: 'row',
     gap: 10,
   },
   mealSelector: {
-    minWidth: 160,
+    minWidth: 130,
     borderWidth: 1,
     borderRadius: 18,
-    padding: 14,
+    padding: 12,
     gap: 4,
   },
   mealSelectorTitle: {
@@ -739,13 +839,21 @@ const styles = StyleSheet.create({
   },
   mealSelectorMeta: {
     fontSize: 12,
+    fontWeight: '700',
   },
   searchInput: {
     borderWidth: 1,
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    borderRadius: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
     fontSize: 15,
+  },
+  recentSection: {
+    gap: 8,
+  },
+  label: {
+    fontSize: 12,
+    fontWeight: '700',
   },
   recentRow: {
     flexDirection: 'row',
@@ -768,75 +876,69 @@ const styles = StyleSheet.create({
   foodCard: {
     borderWidth: 1,
     borderRadius: 18,
-    padding: 14,
+    padding: 12,
     flexDirection: 'row',
-    gap: 12,
+    gap: 10,
     alignItems: 'center',
   },
-  foodCardMeta: {
+  foodCardCopy: {
     flex: 1,
-    gap: 2,
+    gap: 4,
   },
-  foodCardTitle: {
+  foodTitle: {
     fontSize: 15,
     fontWeight: '800',
   },
-  foodCardSubtitle: {
+  foodBody: {
     fontSize: 12,
+    lineHeight: 18,
   },
-  sourceBadge: {
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderRadius: 999,
-    marginTop: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  sourceBadgeLabel: {
-    fontSize: 10,
-    fontWeight: '800',
-    textTransform: 'uppercase',
-  },
-  smallPrimaryButton: {
-    borderRadius: 999,
+  smallButton: {
+    minHeight: 38,
+    borderRadius: 12,
     paddingHorizontal: 12,
-    paddingVertical: 10,
+    justifyContent: 'center',
   },
-  smallPrimaryLabel: {
-    color: '#FFFFFF',
+  smallButtonLabel: {
+    color: '#000000',
     fontSize: 12,
-    fontWeight: '800',
+    fontWeight: '900',
   },
-  barcodePanel: {
-    gap: 10,
-  },
-  barcodeHeader: {
+  row: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: 10,
-    alignItems: 'center',
+    gap: 16,
   },
-  barcodeTitle: {
-    fontSize: 18,
-    fontWeight: '800',
+  barcodeCard: {
+    flex: 1,
+    minWidth: 280,
+    borderWidth: 1,
+    borderRadius: 26,
+    padding: 18,
+    gap: 12,
+  },
+  targetsCard: {
+    flex: 1,
+    minWidth: 280,
+    borderWidth: 1,
+    borderRadius: 26,
+    padding: 18,
+    gap: 12,
   },
   barcodeResult: {
     borderWidth: 1,
     borderRadius: 18,
-    padding: 14,
-    flexDirection: 'row',
-    gap: 12,
-    alignItems: 'center',
+    padding: 12,
+    gap: 10,
   },
-  scannerArea: {
+  scannerSection: {
     gap: 10,
   },
   cameraShell: {
-    overflow: 'hidden',
+    height: 240,
     borderWidth: 1,
-    borderRadius: 20,
-    height: 220,
+    borderRadius: 18,
+    overflow: 'hidden',
   },
   camera: {
     flex: 1,
@@ -850,52 +952,46 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 12,
   },
-  numericField: {
-    minWidth: 150,
-    flexGrow: 1,
-    gap: 6,
-  },
-  numericFieldCompact: {
-    minWidth: 110,
-  },
-  numericLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  numericInput: {
+  mealCard: {
     borderWidth: 1,
-    borderRadius: 14,
-    paddingHorizontal: 12,
-    paddingVertical: 11,
-    fontSize: 15,
+    borderRadius: 28,
+    padding: 18,
+    gap: 14,
   },
-  numericInputCompact: {
-    paddingVertical: Platform.OS === 'web' ? 10 : 9,
-    fontSize: 14,
+  mealHeader: {
+    flexDirection: 'row',
+    gap: 12,
+    alignItems: 'flex-start',
   },
-  mealHeaderRow: {
-    gap: 10,
+  mealHeaderCopy: {
+    flex: 1,
+    gap: 8,
   },
   mealTitleInput: {
     borderWidth: 1,
-    borderRadius: 14,
-    paddingHorizontal: 12,
-    paddingVertical: 11,
-    fontSize: 15,
-    fontWeight: '700',
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  mealSummary: {
+    fontSize: 12,
   },
   inlineActions: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
+    justifyContent: 'flex-end',
   },
-  secondaryButton: {
+  miniAction: {
+    minHeight: 34,
     borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    justifyContent: 'center',
   },
-  secondaryLabel: {
+  miniActionLabel: {
     fontSize: 12,
     fontWeight: '700',
   },
@@ -905,60 +1001,49 @@ const styles = StyleSheet.create({
   entryCard: {
     borderWidth: 1,
     borderRadius: 20,
-    padding: 14,
-    gap: 12,
+    padding: 12,
+    gap: 10,
   },
-  entryTopRow: {
-    gap: 8,
+  entryHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  entryIndex: {
+    fontSize: 12,
+    fontWeight: '700',
   },
   entryNameInput: {
     borderWidth: 1,
-    borderRadius: 14,
+    borderRadius: 16,
     paddingHorizontal: 12,
     paddingVertical: 11,
     fontSize: 15,
-    fontWeight: '600',
   },
   entryGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
   },
-  mealFooter: {
+  field: {
+    minWidth: 130,
+    flexGrow: 1,
+    gap: 6,
+  },
+  compactField: {
+    minWidth: 96,
+  },
+  fieldLabel: {
+    fontSize: 11,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
+  fieldInput: {
     borderWidth: 1,
-    borderRadius: 18,
-    padding: 14,
-    gap: 4,
-  },
-  mealFooterTitle: {
-    fontSize: 13,
-    fontWeight: '800',
-  },
-  mealFooterMeta: {
-    fontSize: 13,
-  },
-  fabDock: {
-    flexDirection: 'row',
-    gap: 10,
-    borderWidth: 1,
-    borderRadius: 26,
-    padding: 10,
-    marginBottom: 4,
-  },
-  fabButton: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 18,
-    paddingVertical: 14,
-  },
-  fabLabel: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '800',
-  },
-  fabGhostLabel: {
-    fontSize: 13,
-    fontWeight: '800',
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 14,
   },
 });

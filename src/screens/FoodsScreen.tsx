@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { SectionCard } from '../components/SectionCard';
+import { EmptyStateCard } from '../components/EmptyStateCard';
 import { deleteFood, listFoods, saveFood, saveUserFoodEdit } from '../db/foodsRepo';
 import { useTheme } from '../theme/ThemeProvider';
 import type { FoodItem } from '../types/models';
@@ -103,95 +103,60 @@ export function FoodsScreen({ onFoodsChanged }: FoodsScreenProps) {
     onFoodsChanged();
   }
 
+  const userFoods = useMemo(() => foods.filter((food) => food.scope === 'user').length, [foods]);
+
   return (
     <View style={styles.screen}>
-      <SectionCard title="Foods Database" subtitle="Search foods, create your own entries, and keep diary lookup fast.">
-        <View style={styles.formGrid}>
-          <FoodField label="Name" value={draft.name} onChangeText={(value) => setDraft((current) => ({ ...current, name: value }))} />
-          <FoodField label="Brand" value={draft.brand} onChangeText={(value) => setDraft((current) => ({ ...current, brand: value }))} />
-          <FoodField label="Barcode" value={draft.barcode} onChangeText={(value) => setDraft((current) => ({ ...current, barcode: value }))} />
-          <FoodField label="Serving Size" value={draft.servingSize} onChangeText={(value) => setDraft((current) => ({ ...current, servingSize: value }))} />
-          <FoodField label="Serving Unit" value={draft.servingUnit} onChangeText={(value) => setDraft((current) => ({ ...current, servingUnit: value }))} />
-          <FoodField label="Calories" value={draft.calories} onChangeText={(value) => setDraft((current) => ({ ...current, calories: value }))} />
-          <FoodField label="Carbs" value={draft.carbs} onChangeText={(value) => setDraft((current) => ({ ...current, carbs: value }))} />
-          <FoodField label="Protein" value={draft.protein} onChangeText={(value) => setDraft((current) => ({ ...current, protein: value }))} />
-          <FoodField label="Fat" value={draft.fat} onChangeText={(value) => setDraft((current) => ({ ...current, fat: value }))} />
-        </View>
-        <View style={styles.actionRow}>
-          <Pressable style={[styles.primaryButton, { backgroundColor: colors.accent }]} onPress={() => void handleSave()}>
-            <Text style={styles.primaryButtonLabel}>{draft.id ? 'Update Food' : 'Save Food'}</Text>
-          </Pressable>
-          <Pressable
-            style={[styles.secondaryButton, { borderColor: colors.border }]}
-            onPress={() => {
-              setDraft(emptyDraft);
-              setEditingFood(null);
-              setStatus('');
-            }}
-          >
-            <Text style={[styles.secondaryButtonLabel, { color: colors.text }]}>New Food</Text>
-          </Pressable>
-        </View>
-        {status ? <Text style={[styles.statusText, { color: colors.muted }]}>{status}</Text> : null}
-      </SectionCard>
-
-      <SectionCard title="Browse Foods" subtitle="Layered catalog: your foods first, shared foods next.">
+      <View style={[styles.hero, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <Text style={[styles.eyebrow, { color: colors.accentSecondary }]}>FUEL DATABASE SEARCH</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Search, compare, and tune your food library in the same view.</Text>
         <TextInput
           value={query}
           onChangeText={setQuery}
-          placeholder="Search by name or brand"
+          placeholder="Search by name, brand, or barcode"
           placeholderTextColor={colors.muted}
-          style={[
-            styles.searchInput,
-            { borderColor: colors.border, backgroundColor: colors.background, color: colors.text },
-          ]}
+          style={[styles.searchInput, { borderColor: colors.border, backgroundColor: colors.background, color: colors.text }]}
         />
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={styles.table}>
-            <View style={[styles.headerRow, { borderColor: colors.border, backgroundColor: colors.surfaceMuted }]}>
-              <Text style={[styles.nameCol, styles.headerText, { color: colors.muted }]}>Food</Text>
-              <Text style={[styles.barcodeCol, styles.headerText, { color: colors.muted }]}>Barcode</Text>
-              <Text style={[styles.metaCol, styles.headerText, { color: colors.muted }]}>Serving</Text>
-              <Text style={[styles.macroCol, styles.headerText, { color: colors.muted }]}>Calories</Text>
-              <Text style={[styles.macroCol, styles.headerText, { color: colors.muted }]}>Carbs</Text>
-              <Text style={[styles.macroCol, styles.headerText, { color: colors.muted }]}>Protein</Text>
-              <Text style={[styles.macroCol, styles.headerText, { color: colors.muted }]}>Fat</Text>
-              <Text style={[styles.actionCol, styles.headerText, { color: colors.muted }]}>Actions</Text>
-            </View>
-            {foods.map((food, index) => (
-              <View
-                key={food.id}
-                style={[
-                  styles.foodRow,
-                  {
-                    borderColor: colors.border,
-                    backgroundColor: index % 2 === 0 ? colors.surface : colors.surfaceMuted,
-                  },
-                ]}
-              >
-                <View style={styles.nameCol}>
-                  <Text style={[styles.foodName, { color: colors.text }]}>{food.name}</Text>
-                  {food.brand ? <Text style={[styles.foodBrand, { color: colors.muted }]}>{food.brand}</Text> : null}
-                  <View style={[styles.scopeBadge, { backgroundColor: food.scope === 'user' ? colors.accentSoft : colors.surface, borderColor: colors.border }]}>
-                    <Text style={[styles.scopeLabel, { color: food.scope === 'user' ? colors.accent : colors.muted }]}>
-                      {food.scope}
-                    </Text>
+        <View style={styles.statRow}>
+          <StatChip label="Results" value={`${foods.length}`} tone={colors.accent} />
+          <StatChip label="Your foods" value={`${userFoods}`} tone={colors.accentSecondary} />
+          <StatChip label="Shared" value={`${Math.max(0, foods.length - userFoods)}`} tone={colors.premium} />
+        </View>
+      </View>
+
+      <View style={styles.row}>
+        <View style={[styles.catalogPanel, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.sectionEyebrow, { color: colors.accent }]}>DATABASE RESULTS</Text>
+          <View style={styles.resultsList}>
+            {foods.length > 0 ? (
+              foods.map((food) => (
+                <View key={food.id} style={[styles.foodCard, { backgroundColor: colors.surfaceMuted, borderColor: colors.border }]}>
+                  <View style={styles.foodHeader}>
+                    <View style={styles.foodCopy}>
+                      <Text style={[styles.foodName, { color: colors.text }]}>{food.name}</Text>
+                      <Text style={[styles.foodMeta, { color: colors.muted }]}>
+                        {food.brand ? `${food.brand} • ` : ''}
+                        {food.servingSize} {food.servingUnit}
+                        {food.barcode ? ` • ${food.barcode}` : ''}
+                      </Text>
+                    </View>
+                    <View style={[styles.scopeBadge, { borderColor: food.scope === 'user' ? colors.accent : colors.border }]}>
+                      <Text style={[styles.scopeLabel, { color: food.scope === 'user' ? colors.accent : colors.muted }]}>{food.scope}</Text>
+                    </View>
                   </View>
-                </View>
-                <Text style={[styles.barcodeCol, styles.bodyText, { color: colors.text }]}>{food.barcode || '—'}</Text>
-                <Text style={[styles.metaCol, styles.bodyText, { color: colors.text }]}>
-                  {food.servingSize} {food.servingUnit}
-                </Text>
-                <Text style={[styles.macroCol, styles.bodyText, { color: colors.text }]}>{food.calories}</Text>
-                <Text style={[styles.macroCol, styles.bodyText, { color: colors.text }]}>{food.carbs}</Text>
-                <Text style={[styles.macroCol, styles.bodyText, { color: colors.text }]}>{food.protein}</Text>
-                <Text style={[styles.macroCol, styles.bodyText, { color: colors.text }]}>{food.fat}</Text>
-                <View style={styles.actionCol}>
-                  <Pressable
-                    style={[styles.secondaryButton, { borderColor: colors.border }]}
-                    onPress={() =>
-                      {
+
+                  <View style={styles.macroRow}>
+                    <MacroPill label="Cal" value={String(food.calories)} />
+                    <MacroPill label="Carbs" value={String(food.carbs)} />
+                    <MacroPill label="Protein" value={String(food.protein)} />
+                    <MacroPill label="Fat" value={String(food.fat)} />
+                  </View>
+
+                  <View style={styles.actionRow}>
+                    <Pressable
+                      style={[styles.secondaryButton, { borderColor: colors.border }]}
+                      onPress={() => {
                         setEditingFood(food);
                         setDraft({
                           id: food.id,
@@ -205,29 +170,86 @@ export function FoodsScreen({ onFoodsChanged }: FoodsScreenProps) {
                           protein: String(food.protein),
                           fat: String(food.fat),
                         });
-                      }
-                    }
-                  >
-                    <Text style={[styles.secondaryButtonLabel, { color: colors.text }]}>Edit</Text>
-                  </Pressable>
-                  <Pressable
-                    style={[styles.secondaryButton, { borderColor: colors.border }]}
-                    onPress={async () => {
-                      await deleteFood(food.id);
-                      await refresh();
-                      onFoodsChanged();
-                    }}
-                  >
-                    <Text style={[styles.secondaryButtonLabel, { color: colors.text }]}>Delete</Text>
-                  </Pressable>
+                        setStatus('');
+                      }}
+                    >
+                      <Text style={[styles.secondaryButtonLabel, { color: colors.text }]}>Edit</Text>
+                    </Pressable>
+                    <Pressable
+                      style={[styles.secondaryButton, { borderColor: colors.border }]}
+                      onPress={async () => {
+                        await deleteFood(food.id);
+                        await refresh();
+                        onFoodsChanged();
+                      }}
+                    >
+                      <Text style={[styles.secondaryButtonLabel, { color: colors.text }]}>Delete</Text>
+                    </Pressable>
+                  </View>
                 </View>
-              </View>
-            ))}
+              ))
+            ) : (
+              <EmptyStateCard title="No foods found" body="Try a broader search or create the food in the editor panel." />
+            )}
           </View>
-        </ScrollView>
-      </SectionCard>
+        </View>
+
+        <View style={[styles.editorPanel, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.sectionEyebrow, { color: colors.accentSecondary }]}>
+            {editingFood ? 'ADD FOOD / EDIT FOOD' : 'ADD FOOD / SEARCH FOOD'}
+          </Text>
+
+          <View style={styles.formGrid}>
+            <FoodField label="Name" value={draft.name} onChangeText={(value) => setDraft((current) => ({ ...current, name: value }))} />
+            <FoodField label="Brand" value={draft.brand} onChangeText={(value) => setDraft((current) => ({ ...current, brand: value }))} />
+            <FoodField label="Barcode" value={draft.barcode} onChangeText={(value) => setDraft((current) => ({ ...current, barcode: value }))} />
+            <FoodField label="Serving size" value={draft.servingSize} onChangeText={(value) => setDraft((current) => ({ ...current, servingSize: value }))} />
+            <FoodField label="Serving unit" value={draft.servingUnit} onChangeText={(value) => setDraft((current) => ({ ...current, servingUnit: value }))} />
+            <FoodField label="Calories" value={draft.calories} onChangeText={(value) => setDraft((current) => ({ ...current, calories: value }))} />
+            <FoodField label="Carbs" value={draft.carbs} onChangeText={(value) => setDraft((current) => ({ ...current, carbs: value }))} />
+            <FoodField label="Protein" value={draft.protein} onChangeText={(value) => setDraft((current) => ({ ...current, protein: value }))} />
+            <FoodField label="Fat" value={draft.fat} onChangeText={(value) => setDraft((current) => ({ ...current, fat: value }))} />
+          </View>
+
+          <View style={styles.actionRow}>
+            <Pressable style={[styles.primaryButton, { backgroundColor: colors.accent }]} onPress={() => void handleSave()}>
+              <Text style={styles.primaryButtonLabel}>{draft.id ? 'Update food' : 'Save food'}</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.secondaryButton, { borderColor: colors.border }]}
+              onPress={() => {
+                setDraft(emptyDraft);
+                setEditingFood(null);
+                setStatus('');
+              }}
+            >
+              <Text style={[styles.secondaryButtonLabel, { color: colors.text }]}>Reset</Text>
+            </Pressable>
+          </View>
+
+          {status ? <Text style={[styles.statusText, { color: colors.muted }]}>{status}</Text> : null}
+        </View>
+      </View>
     </View>
   );
+
+  function StatChip({ label, value, tone }: { label: string; value: string; tone: string }) {
+    return (
+      <View style={[styles.statChip, { borderColor: tone }]}>
+        <Text style={[styles.statValue, { color: tone }]}>{value}</Text>
+        <Text style={styles.statLabel}>{label}</Text>
+      </View>
+    );
+  }
+
+  function MacroPill({ label, value }: { label: string; value: string }) {
+    return (
+      <View style={styles.macroPill}>
+        <Text style={styles.macroPillLabel}>{label}</Text>
+        <Text style={styles.macroPillValue}>{value}</Text>
+      </View>
+    );
+  }
 
   function FoodField({
     label,
@@ -246,10 +268,7 @@ export function FoodsScreen({ onFoodsChanged }: FoodsScreenProps) {
           onChangeText={onChangeText}
           placeholder={label}
           placeholderTextColor={colors.muted}
-          style={[
-            styles.fieldInput,
-            { borderColor: colors.border, backgroundColor: colors.background, color: colors.text },
-          ]}
+          style={[styles.fieldInput, { borderColor: colors.border, backgroundColor: colors.background, color: colors.text }]}
         />
       </View>
     );
@@ -260,123 +279,188 @@ const styles = StyleSheet.create({
   screen: {
     gap: 16,
   },
-  formGrid: {
+  hero: {
+    borderWidth: 1,
+    borderRadius: 28,
+    padding: 18,
+    gap: 14,
+  },
+  eyebrow: {
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 1,
+  },
+  title: {
+    fontSize: 30,
+    lineHeight: 34,
+    fontWeight: '900',
+  },
+  searchInput: {
+    borderWidth: 1,
+    borderRadius: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    fontSize: 16,
+  },
+  statRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    gap: 10,
+  },
+  statChip: {
+    minWidth: 100,
+    borderWidth: 1,
+    borderRadius: 18,
+    padding: 12,
+    gap: 2,
+  },
+  statValue: {
+    fontSize: 22,
+    fontWeight: '900',
+  },
+  statLabel: {
+    color: '#ADAAAA',
+    fontSize: 11,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
+  row: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+  },
+  catalogPanel: {
+    flex: 1.1,
+    minWidth: 300,
+    borderWidth: 1,
+    borderRadius: 26,
+    padding: 18,
     gap: 12,
   },
-  field: {
-    minWidth: 160,
-    flexGrow: 1,
-    gap: 6,
-  },
-  fieldLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  fieldInput: {
+  editorPanel: {
+    flex: 0.9,
+    minWidth: 280,
     borderWidth: 1,
-    borderRadius: 14,
-    paddingHorizontal: 12,
-    paddingVertical: 11,
-    fontSize: 15,
+    borderRadius: 26,
+    padding: 18,
+    gap: 12,
+  },
+  sectionEyebrow: {
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 1,
+  },
+  resultsList: {
+    gap: 10,
+  },
+  foodCard: {
+    borderWidth: 1,
+    borderRadius: 20,
+    padding: 14,
+    gap: 10,
+  },
+  foodHeader: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  foodCopy: {
+    flex: 1,
+    gap: 4,
+  },
+  foodName: {
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  foodMeta: {
+    fontSize: 12,
+    lineHeight: 18,
+  },
+  scopeBadge: {
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  scopeLabel: {
+    fontSize: 10,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
+  macroRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  macroPill: {
+    borderRadius: 999,
+    backgroundColor: '#111111',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    gap: 2,
+  },
+  macroPillLabel: {
+    color: '#ADAAAA',
+    fontSize: 10,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
+  macroPillValue: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '800',
   },
   actionRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
   },
-  primaryButton: {
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  primaryButtonLabel: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '800',
-  },
   secondaryButton: {
+    minHeight: 42,
     borderWidth: 1,
     borderRadius: 14,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingHorizontal: 14,
+    justifyContent: 'center',
   },
   secondaryButtonLabel: {
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: '800',
   },
-  searchInput: {
+  formGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  field: {
+    minWidth: 120,
+    flexGrow: 1,
+    gap: 6,
+  },
+  fieldLabel: {
+    fontSize: 11,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
+  fieldInput: {
     borderWidth: 1,
     borderRadius: 16,
     paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingVertical: 11,
     fontSize: 15,
   },
-  table: {
-    minWidth: 860,
+  primaryButton: {
+    minHeight: 44,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    justifyContent: 'center',
   },
-  headerRow: {
-    flexDirection: 'row',
-    borderWidth: 1,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 12,
-  },
-  headerText: {
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  foodRow: {
-    flexDirection: 'row',
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 12,
-  },
-  nameCol: {
-    width: 220,
-    paddingRight: 12,
-  },
-  metaCol: {
-    width: 120,
-  },
-  barcodeCol: {
-    width: 140,
-  },
-  macroCol: {
-    width: 90,
-  },
-  actionCol: {
-    width: 180,
-    flexDirection: 'row',
-    gap: 8,
-  },
-  foodName: {
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  foodBrand: {
-    fontSize: 12,
-    marginTop: 3,
-  },
-  scopeBadge: {
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderRadius: 999,
-    marginTop: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  scopeLabel: {
-    fontSize: 10,
-    fontWeight: '800',
-    textTransform: 'uppercase',
-  },
-  bodyText: {
-    fontSize: 14,
+  primaryButtonLabel: {
+    color: '#000000',
+    fontSize: 13,
+    fontWeight: '900',
   },
   statusText: {
     fontSize: 12,

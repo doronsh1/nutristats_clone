@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { SectionCard } from '../components/SectionCard';
+import { EmptyStateCard } from '../components/EmptyStateCard';
 import { getReportSummary } from '../db/diaryRepo';
+import { formatDateLabel } from '../domain/dates';
 import { useTheme } from '../theme/ThemeProvider';
 import type { ReportSummary } from '../types/models';
 
@@ -29,9 +30,10 @@ export function ReportsScreen({ refreshKey }: ReportsScreenProps) {
 
   if (!summary) {
     return (
-      <SectionCard title="Reports" subtitle="Loading historical summary...">
-        <Text style={{ color: colors.muted }}>Calculating recent totals and streaks.</Text>
-      </SectionCard>
+      <View style={[styles.loadingCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <Text style={[styles.loadingTitle, { color: colors.text }]}>Loading performance signals</Text>
+        <Text style={[styles.loadingBody, { color: colors.muted }]}>Recent adherence is being calculated.</Text>
+      </View>
     );
   }
 
@@ -39,7 +41,10 @@ export function ReportsScreen({ refreshKey }: ReportsScreenProps) {
 
   return (
     <View style={styles.screen}>
-      <SectionCard title="Reports" subtitle="Recent intake, averages, and logging consistency.">
+      <View style={[styles.hero, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <Text style={[styles.eyebrow, { color: colors.accentSecondary }]}>PERFORMANCE SIGNALS</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Trends read like a console instead of a spreadsheet.</Text>
+
         <View style={styles.rangeRow}>
           {[7, 30].map((days) => {
             const active = days === rangeDays;
@@ -55,68 +60,56 @@ export function ReportsScreen({ refreshKey }: ReportsScreenProps) {
                 ]}
                 onPress={() => setRangeDays(days as 7 | 30)}
               >
-                <Text style={[styles.rangeLabel, { color: active ? colors.surface : colors.text }]}>
-                  Last {days} Days
-                </Text>
+                <Text style={[styles.rangeLabel, { color: active ? '#000000' : colors.text }]}>Last {days} days</Text>
               </Pressable>
             );
           })}
         </View>
 
-        <View style={styles.metricGrid}>
-          <MetricCard label="Logged Days" value={String(summary.loggedDays)} helper={`${summary.rangeDays}-day window`} />
-          <MetricCard label="Logging Streak" value={`${summary.loggingStreak}`} helper="consecutive active days" />
-          <MetricCard label="Avg Calories" value={`${summary.averageCalories}`} helper="per logged day" />
-          <MetricCard label="Avg Protein" value={`${summary.averageProtein} g`} helper="per logged day" />
-          <MetricCard label="Avg Carbs" value={`${summary.averageCarbs} g`} helper="per logged day" />
-          <MetricCard label="Avg Fat" value={`${summary.averageFat} g`} helper="per logged day" />
+        <View style={styles.metricRow}>
+          <MetricCard label="Logged days" value={`${summary.loggedDays}`} helper={`${summary.rangeDays}-day window`} />
+          <MetricCard label="Streak" value={`${summary.loggingStreak}`} helper="consecutive entries" />
+          <MetricCard label="Avg calories" value={`${summary.averageCalories}`} helper="per logged day" />
+          <MetricCard label="Avg protein" value={`${summary.averageProtein}g`} helper="per logged day" />
         </View>
-      </SectionCard>
+      </View>
 
-      <SectionCard title="Recent Days" subtitle="Calories bar and macro totals by day.">
-        <View style={styles.dayList}>
-          {summary.recentDays.map((day) => (
-            <View
-              key={day.date}
-              style={[styles.dayRow, { borderColor: colors.border, backgroundColor: colors.surfaceMuted }]}
-            >
-              <View style={styles.dayMeta}>
-                <Text style={[styles.dayDate, { color: colors.text }]}>{day.date}</Text>
-                <Text style={[styles.daySubtle, { color: colors.muted }]}>
+      <View style={[styles.historyCard, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <Text style={[styles.historyEyebrow, { color: colors.accent }]}>RECENT DAYS</Text>
+        {summary.recentDays.length > 0 ? (
+          summary.recentDays.map((day) => (
+            <View key={day.date} style={[styles.dayRow, { borderColor: colors.border }]}>
+              <View style={styles.dayHeader}>
+                <Text style={[styles.dayDate, { color: colors.text }]}>{formatDateLabel(day.date)}</Text>
+                <Text style={[styles.dayMeta, { color: colors.muted }]}>
                   {day.protein}p / {day.carbs}c / {day.fat}f
                 </Text>
               </View>
-              <View style={styles.barTrack}>
+              <View style={[styles.barTrack, { backgroundColor: colors.surfaceMuted }]}>
                 <View
                   style={[
                     styles.barFill,
                     {
                       width: `${Math.max(8, (day.calories / maxCalories) * 100)}%`,
-                      backgroundColor: colors.accent,
+                      backgroundColor: colors.accentSecondary,
                     },
                   ]}
                 />
               </View>
-              <View style={styles.dayScore}>
-                <Text style={[styles.dayCalories, { color: colors.text }]}>{Math.round(day.calories)} kcal</Text>
-                <Text style={[styles.daySubtle, { color: colors.muted }]}>goal {Math.round(day.goalCalories)}</Text>
-              </View>
+              <Text style={[styles.dayCalories, { color: colors.text }]}>
+                {Math.round(day.calories)} kcal
+                <Text style={[styles.dayGoal, { color: colors.muted }]}> / goal {Math.round(day.goalCalories)}</Text>
+              </Text>
             </View>
-          ))}
-        </View>
-      </SectionCard>
+          ))
+        ) : (
+          <EmptyStateCard title="No history yet" body="Start logging meals and this screen will fill in with recent calorie and macro performance." />
+        )}
+      </View>
     </View>
   );
 
-  function MetricCard({
-    label,
-    value,
-    helper,
-  }: {
-    label: string;
-    value: string;
-    helper: string;
-  }) {
+  function MetricCard({ label, value, helper }: { label: string; value: string; helper: string }) {
     return (
       <View style={[styles.metricCard, { backgroundColor: colors.surfaceMuted, borderColor: colors.border }]}>
         <Text style={[styles.metricLabel, { color: colors.muted }]}>{label}</Text>
@@ -131,9 +124,37 @@ const styles = StyleSheet.create({
   screen: {
     gap: 16,
   },
+  loadingCard: {
+    borderWidth: 1,
+    borderRadius: 24,
+    padding: 18,
+    gap: 6,
+  },
+  loadingTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+  },
+  loadingBody: {
+    fontSize: 14,
+  },
+  hero: {
+    borderWidth: 1,
+    borderRadius: 28,
+    padding: 18,
+    gap: 14,
+  },
+  eyebrow: {
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 1,
+  },
+  title: {
+    fontSize: 30,
+    lineHeight: 34,
+    fontWeight: '900',
+  },
   rangeRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: 10,
   },
   rangeButton: {
@@ -144,68 +165,77 @@ const styles = StyleSheet.create({
   },
   rangeLabel: {
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: '900',
   },
-  metricGrid: {
+  metricRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: 10,
   },
   metricCard: {
-    minWidth: 160,
+    minWidth: 140,
     flexGrow: 1,
     borderWidth: 1,
     borderRadius: 18,
-    padding: 14,
+    padding: 12,
     gap: 4,
   },
   metricLabel: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 11,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
   },
   metricValue: {
     fontSize: 28,
-    fontWeight: '800',
+    fontWeight: '900',
   },
   metricHelper: {
     fontSize: 12,
   },
-  dayList: {
-    gap: 10,
+  historyCard: {
+    borderWidth: 1,
+    borderRadius: 28,
+    padding: 18,
+    gap: 12,
+  },
+  historyEyebrow: {
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 1,
   },
   dayRow: {
-    borderWidth: 1,
-    borderRadius: 18,
-    padding: 12,
-    gap: 10,
+    borderBottomWidth: 1,
+    paddingBottom: 12,
+    gap: 8,
   },
-  dayMeta: {
-    gap: 2,
+  dayHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 10,
   },
   dayDate: {
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '800',
   },
-  daySubtle: {
+  dayMeta: {
     fontSize: 12,
   },
   barTrack: {
     height: 10,
     borderRadius: 999,
-    backgroundColor: 'rgba(0,0,0,0.08)',
     overflow: 'hidden',
   },
   barFill: {
     height: '100%',
     borderRadius: 999,
   },
-  dayScore: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 10,
-  },
   dayCalories: {
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: '800',
+  },
+  dayGoal: {
+    fontSize: 13,
+    fontWeight: '500',
   },
 });

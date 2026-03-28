@@ -79,22 +79,29 @@ export function LoginScreen() {
 
   return (
     <View style={[styles.shell, { backgroundColor: colors.background }]}>
+      <View style={styles.backdropShape} />
+      <View style={styles.backdropShapeSecondary} />
+
       <View style={[styles.panel, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <View style={styles.hero}>
-          <View style={[styles.badge, { backgroundColor: colors.accentSoft, borderColor: colors.border }]}>
-            <Text style={[styles.badgeText, { color: colors.accent }]}>Atlas Account</Text>
-          </View>
-          <Text style={[styles.title, { color: colors.text }]}>Sign in to sync your nutrition workspace.</Text>
+          <Text style={[styles.eyebrow, { color: colors.accentSecondary }]}>ATHLETE LOGIN / NUTRISTATS</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Enter the performance lab.</Text>
           <Text style={[styles.subtitle, { color: colors.muted }]}>
-            Use Firebase Auth for email sign-in now, then connect backend food data and subscriptions after that.
+            Sync your meal plan, saved templates, and premium training intelligence from one athlete profile.
           </Text>
+        </View>
+
+        <View style={styles.metricRow}>
+          <MetricCard label="Saved meals" value="48" tone={colors.accent} />
+          <MetricCard label="Planner state" value="Live" tone={colors.accentSecondary} />
+          <MetricCard label="Tier" value="Pro" tone={colors.premium} />
         </View>
 
         <View style={[styles.modeRow, { backgroundColor: colors.surfaceMuted, borderColor: colors.border }]}>
           {([
             ['signin', 'Sign in'],
-            ['signup', 'Create account'],
-            ['reset', 'Reset password'],
+            ['signup', 'Create'],
+            ['reset', 'Recover'],
           ] as [AuthMode, string][]).map(([value, label]) => {
             const active = value === mode;
             return (
@@ -107,13 +114,10 @@ export function LoginScreen() {
                 }}
                 style={[
                   styles.modeButton,
-                  {
-                    backgroundColor: active ? colors.surface : 'transparent',
-                    borderColor: active ? colors.border : 'transparent',
-                  },
+                  active ? { backgroundColor: colors.accent } : null,
                 ]}
               >
-                <Text style={[styles.modeLabel, { color: active ? colors.text : colors.muted }]}>{label}</Text>
+                <Text style={[styles.modeLabel, { color: active ? '#000000' : colors.muted }]}>{label}</Text>
               </Pressable>
             );
           })}
@@ -123,7 +127,7 @@ export function LoginScreen() {
           <View style={[styles.notice, { backgroundColor: colors.surfaceMuted, borderColor: colors.warning }]}>
             <Text style={[styles.noticeTitle, { color: colors.text }]}>Firebase setup required</Text>
             <Text style={[styles.noticeBody, { color: colors.muted }]}>
-              Add the missing `EXPO_PUBLIC_FIREBASE_*` values locally and in Cloudflare before login will work.
+              Add the missing `EXPO_PUBLIC_FIREBASE_*` values locally and in Cloudflare before auth will work.
             </Text>
             <Text style={[styles.noticeList, { color: colors.warning }]}>{missingKeys.join('\n')}</Text>
           </View>
@@ -159,16 +163,12 @@ export function LoginScreen() {
               autoComplete="new-password"
             />
           ) : null}
-          {error ? <Text style={[styles.error, { color: colors.danger }]}>{error}</Text> : null}
-          {message ? <Text style={[styles.message, { color: colors.success }]}>{message}</Text> : null}
+
+          {error ? <Text style={[styles.feedback, { color: colors.danger }]}>{error}</Text> : null}
+          {message ? <Text style={[styles.feedback, { color: colors.success }]}>{message}</Text> : null}
+
           <Pressable
-            style={[
-              styles.submit,
-              {
-                backgroundColor: configured ? colors.accent : colors.border,
-                opacity: submitting ? 0.8 : 1,
-              },
-            ]}
+            style={[styles.submit, { backgroundColor: configured ? colors.accent : colors.border, opacity: submitting ? 0.8 : 1 }]}
             onPress={handleSubmit}
             disabled={submitting || !configured}
           >
@@ -183,11 +183,20 @@ export function LoginScreen() {
                   ? 'Send reset email'
                   : mode === 'signup'
                     ? 'Create account'
-                    : 'Sign in'}
+                    : 'Access workspace'}
             </Text>
           </Pressable>
         </View>
       </View>
+    </View>
+  );
+}
+
+function MetricCard({ label, value, tone }: { label: string; value: string; tone: string }) {
+  return (
+    <View style={[styles.metricCard, { borderColor: tone }]}>
+      <Text style={[styles.metricValue, { color: tone }]}>{value}</Text>
+      <Text style={styles.metricLabel}>{label}</Text>
     </View>
   );
 }
@@ -221,14 +230,9 @@ function Field({
         autoCapitalize={autoCapitalize}
         keyboardType={keyboardType}
         autoComplete={autoComplete}
-        style={[
-          styles.input,
-          {
-            borderColor: colors.border,
-            backgroundColor: colors.background,
-            color: colors.text,
-          },
-        ]}
+        placeholder={label}
+        placeholderTextColor={colors.muted}
+        style={[styles.input, { borderColor: colors.border, color: colors.text, backgroundColor: colors.background }]}
       />
     </View>
   );
@@ -237,42 +241,77 @@ function Field({
 const styles = StyleSheet.create({
   shell: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
-    padding: 24,
+    padding: 22,
+  },
+  backdropShape: {
+    position: 'absolute',
+    top: 80,
+    right: -60,
+    width: 180,
+    height: 180,
+    borderRadius: 999,
+    backgroundColor: 'rgba(255, 143, 111, 0.12)',
+  },
+  backdropShapeSecondary: {
+    position: 'absolute',
+    bottom: 40,
+    left: -30,
+    width: 160,
+    height: 160,
+    borderRadius: 30,
+    transform: [{ rotate: '-18deg' }],
+    backgroundColor: 'rgba(0, 227, 253, 0.1)',
   },
   panel: {
     width: '100%',
-    maxWidth: 540,
+    maxWidth: 560,
+    alignSelf: 'center',
     borderWidth: 1,
-    borderRadius: 32,
-    padding: 24,
-    gap: 24,
+    borderRadius: 30,
+    padding: 22,
+    gap: 18,
   },
   hero: {
-    gap: 12,
+    gap: 10,
   },
-  badge: {
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  badgeText: {
-    fontSize: 12,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
+  eyebrow: {
+    fontSize: 11,
+    fontWeight: '900',
+    letterSpacing: 1.2,
   },
   title: {
-    fontSize: 30,
-    lineHeight: 36,
-    fontWeight: '800',
+    fontSize: 34,
+    lineHeight: 38,
+    fontWeight: '900',
   },
   subtitle: {
     fontSize: 15,
     lineHeight: 22,
+  },
+  metricRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  metricCard: {
+    flex: 1,
+    minHeight: 84,
+    borderRadius: 18,
+    borderWidth: 1,
+    padding: 12,
+    justifyContent: 'space-between',
+    backgroundColor: '#111111',
+  },
+  metricValue: {
+    fontSize: 24,
+    fontWeight: '900',
+  },
+  metricLabel: {
+    color: '#ADAAAA',
+    fontSize: 11,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
   },
   modeRow: {
     flexDirection: 'row',
@@ -283,14 +322,14 @@ const styles = StyleSheet.create({
   },
   modeButton: {
     flex: 1,
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingVertical: 10,
     alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 14,
+    minHeight: 42,
   },
   modeLabel: {
     fontSize: 13,
-    fontWeight: '800',
+    fontWeight: '900',
   },
   notice: {
     borderWidth: 1,
@@ -315,33 +354,34 @@ const styles = StyleSheet.create({
     gap: 14,
   },
   field: {
-    gap: 6,
+    gap: 7,
   },
   fieldLabel: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '700',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
   },
   input: {
     borderWidth: 1,
-    borderRadius: 16,
+    borderRadius: 18,
     paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingVertical: 13,
     fontSize: 16,
   },
-  error: {
+  feedback: {
     fontSize: 13,
-  },
-  message: {
-    fontSize: 13,
+    lineHeight: 18,
   },
   submit: {
-    borderRadius: 16,
-    paddingVertical: 14,
+    borderRadius: 18,
+    minHeight: 52,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   submitLabel: {
-    color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: '800',
+    color: '#000000',
+    fontSize: 14,
+    fontWeight: '900',
   },
 });
