@@ -14,7 +14,7 @@ const TEST_BYPASS_PATHS = new Set([
 ]);
 const TEST_BYPASS_EMAIL = 'test@test.com';
 const TEST_BYPASS_NAME = 'TestUser1';
-const TEST_BYPASS_HOSTS = new Set(['www.dev.nutristat-clone.com', 'dev.nutristat-clone.com', 'localhost', '127.0.0.1']);
+const TEST_BYPASS_HOSTS = new Set(['nutristats-clone.doron-sh.workers.dev', 'localhost', '127.0.0.1']);
 
 export function getTestingBypassSession() {
   if (typeof window === 'undefined') {
