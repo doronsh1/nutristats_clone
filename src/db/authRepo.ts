@@ -12,8 +12,11 @@ const TEST_BYPASS_PATHS = new Set([
   '/aa16fc25-5e07-476f-a8f5-7069cdbaca19',
   '/a16fc25-5e07-476f-a8f5-7069cdbaca19',
 ]);
+
+// TEST_BYPASS_EMAIL and TEST_BYPASS_NAME are used to create a fake session for testing purposes when authentication is not configured. This allows developers to test the application without needing to set up Firebase authentication, while still simulating a logged-in user experience on specific paths and hosts.
 const TEST_BYPASS_EMAIL = 'test@test.com';
 const TEST_BYPASS_NAME = 'TestUser1';
+const TEST_PASSWORD = 'testpassword123';
 const TEST_BYPASS_HOSTS = new Set(['nutristats-clone.doron-sh.workers.dev', 'localhost', '127.0.0.1']);
 
 export function getTestingBypassSession() {
