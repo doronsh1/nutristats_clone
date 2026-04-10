@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "nutristat-clone",
+  "name": "nutristats-clone",
   "compatibility_date": "2026-03-14",
   "assets": {
     "directory": "./dist",
