@@ -8,6 +8,31 @@ import {
   subscribeToFirebaseSession,
 } from '../services/firebase';
 
+const TEST_BYPASS_PATHS = new Set([
+  '/aa16fc25-5e07-476f-a8f5-7069cdbaca19',
+  '/a16fc25-5e07-476f-a8f5-7069cdbaca19',
+]);
+const TEST_BYPASS_EMAIL = 'test@test.com';
+const TEST_BYPASS_NAME = 'TestUser1';
+const TEST_BYPASS_HOSTS = new Set(['www.dev.nutristat-clone.com', 'dev.nutristat-clone.com', 'localhost', '127.0.0.1']);
+
+export function getTestingBypassSession() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  const normalizedPath = window.location.pathname.replace(/\/+$/, '') || '/';
+  if (!TEST_BYPASS_HOSTS.has(window.location.hostname) || !TEST_BYPASS_PATHS.has(normalizedPath)) {
+    return null;
+  }
+
+  return {
+    email: TEST_BYPASS_EMAIL,
+    name: TEST_BYPASS_NAME,
+    path: normalizedPath,
+  };
+}
+
 function mapAuthError(error: unknown) {
   if (!(error instanceof Error)) {
     return 'Authentication failed.';
@@ -37,22 +62,24 @@ export function isAuthConfigured() {
 }
 
 export async function getSession() {
+  const bypassSession = getTestingBypassSession();
   if (!isAuthConfigured()) {
-    return null;
+    return bypassSession?.email ?? null;
   }
 
   const user = await getFirebaseSessionUser();
-  return user?.email ?? null;
+  return user?.email ?? bypassSession?.email ?? null;
 }
 
 export async function subscribeToSession(listener: (email: string | null) => void) {
+  const bypassSession = getTestingBypassSession();
   if (!isAuthConfigured()) {
-    listener(null);
+    listener(bypassSession?.email ?? null);
     return () => {};
   }
 
   return subscribeToFirebaseSession((user) => {
-    listener(user?.email ?? null);
+    listener(user?.email ?? bypassSession?.email ?? null);
   });
 }
 

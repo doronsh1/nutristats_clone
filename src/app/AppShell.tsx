@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BottomTabBar } from '../components/BottomTabBar';
 import { LoginScreen } from '../components/LoginScreen';
-import { logout, subscribeToSession } from '../db/authRepo';
+import { getTestingBypassSession, logout, subscribeToSession } from '../db/authRepo';
 import { getSettings } from '../db/settingsRepo';
 import { DocsScreen } from '../screens/DocsScreen';
 import { FoodsScreen } from '../screens/FoodsScreen';
@@ -59,6 +59,7 @@ const screenMeta: Record<AppScreen, { index: string; title: string; subtitle: st
 
 export function AppShell() {
   const { colors } = useTheme();
+  const testingBypass = getTestingBypassSession();
   const [loading, setLoading] = useState(true);
   const [sessionEmail, setSessionEmail] = useState<string | null>(null);
   const [settings, setSettings] = useState<UserSettings | null>(null);
@@ -136,7 +137,15 @@ export function AppShell() {
   async function handleLogout() {
     await logout();
     setSessionEmail(null);
+    if (testingBypass && typeof window !== 'undefined') {
+      window.location.assign('/');
+    }
   }
+
+  const athleteLabel =
+    testingBypass && sessionEmail === testingBypass.email
+      ? testingBypass.name
+      : sessionEmail?.split('@')[0] || sessionEmail || 'Athlete';
 
   if (loading || !settings) {
     return (
@@ -208,9 +217,13 @@ export function AppShell() {
             </View>
 
             <View style={styles.heroMetrics}>
-              <HeroMetric label="Athlete" value={sessionEmail.split('@')[0] || sessionEmail} helper={todayLabel} />
+              <HeroMetric label="Athlete" value={athleteLabel} helper={todayLabel} />
               <HeroMetric label="Tier" value={settings.subscriptionTier.toUpperCase()} helper="profile state" />
-              <HeroMetric label="Theme" value={settings.theme.toUpperCase()} helper="visual mode" />
+              <HeroMetric
+                label="Theme"
+                value={settings.theme.toUpperCase()}
+                helper={testingBypass ? `bypass ${testingBypass.email}` : 'visual mode'}
+              />
             </View>
           </View>
 
